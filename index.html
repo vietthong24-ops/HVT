@@ -21,8 +21,6 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;title&gt;NKZip - Chấm Bài GDPT 2018&lt;/title&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"&gt;&lt;/script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- Thư viện đọc file Excel --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"&gt;&lt;/script&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;style&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }</b></span></p>
@@ -38,27 +36,25 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section { display: none; padding: 16px; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section.active { display: block; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Cards &amp; Containers */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Cards */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card { background: #1c2541; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #2a385b; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
 <p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Inputs &amp; Selects */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 8px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input, select { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 14px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 14px; }</b></span></p>
+<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Stat Cards */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-card { background: #0b132b; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-val { font-size: 18px; font-weight: bold; color: #38bdf8; margin-top: 4px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-lbl { font-size: 11px; color: #94a3b8; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Stat Box */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-card { background: #0b132b; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-val { font-size: 16px; font-weight: bold; color: #38bdf8; margin-top: 2px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-lbl { font-size: 10px; color: #94a3b8; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Buttons */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-main:active { opacity: 0.9; transform: scale(0.99); }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Action List Items */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item { background: #1c2541; border: 1px solid #2a385b; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item.highlight { background: #f59e0b; color: #0b132b; border: none; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-icon { font-size: 20px; }</b></span></p>
@@ -67,24 +63,24 @@
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Tables */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>table { width: 100%; border-collapse: collapse; margin-top: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th, td { text-align: left; padding: 10px 6px; border-bottom: 1px solid #2a385b; font-size: 12px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th { color: #94a3b8; font-weight: 600; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Bottom Navigation Bar */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Bottom Nav Bar */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 60px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; text-decoration: none; font-size: 11px; gap: 3px; cursor: pointer; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 11px; gap: 3px; cursor: pointer; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item.active { color: #f59e0b; font-weight: bold; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-icon { font-size: 18px; }</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Camera Scanner - KHUNG HÌNH CHỮ NHẬT ĐỨNG A5 */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Camera Modal - Khung hình chữ nhật đứng A5 */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-header { padding: 12px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
 <p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-container {<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>position: relative;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>width: 88%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>max-width: 380px;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>aspect-ratio: 1 / 1.414; /* Tỉ lệ chuẩn giấy đứng A5 */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>width: 86%;<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>max-width: 360px;<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>aspect-ratio: 1 / 1.414; /* Tỉ lệ đứng chuẩn A5 */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>margin: 15px auto 0 auto;<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border-radius: 12px;<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>overflow: hidden;<span class="Apple-converted-space"> </span></b></span></p>
@@ -93,13 +89,9 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>video { width: 100%; height: 100%; object-fit: cover; display: block; }</b></span></p>
 <p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Khung xanh hình chữ nhật đứng chuẩn A5 */</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.scan-guide {<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>position: absolute;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>top: 3%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>bottom: 3%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>left: 3%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>right: 3%;<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>top: 3%; bottom: 3%; left: 3%; right: 3%;<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border: 2.5px dashed #10b981;<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>pointer-events: none;<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border-radius: 6px;<span class="Apple-converted-space"> </span></b></span></p>
@@ -109,7 +101,6 @@
 <p class="p1"><span class="s1"><b>&lt;/head&gt;</b></span></p>
 <p class="p1"><span class="s1"><b>&lt;body&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- Header Banner --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;header&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="logo-group"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="logo-icon"&gt;NK&lt;/div&gt;</b></span></p>
@@ -118,7 +109,7 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="user-name"&gt;Hồ Viết Thống&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/header&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 1: BÀI THI CHI TIẾT --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 1: BÀI THI --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-baithi" class="page-section active"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;</b></span></p>
@@ -140,42 +131,40 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/select&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div style="flex: 1;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Mã đề thi&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Mã đề chính&lt;/label&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" id="mainMade" value="201"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Nút hành động chính --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item highlight" onclick="openCameraModal()"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📷&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Chấm bài ngay&lt;/h4&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Mở camera quét phiếu A5 chữ nhật đứng&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Mở camera quét phiếu A5 đứng&lt;/p&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item" onclick="switchTab('page-thongke', document.querySelectorAll('.nav-item')[3])"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item" onclick="switchTab('page-thongke')"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📊&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Xem thống kê &amp; Bảng điểm&lt;/h4&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Báo cáo điểm chi tiết P.I, P.II, P.III &amp; ĐTB toàn lớp&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Báo cáo điểm từng học sinh &amp; ĐTB toàn lớp&lt;/p&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 2: QUẢN LÝ DANH SÁCH HỌC SINH &amp; TẢI EXCEL --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 2: DANH SÁCH HỌC SINH --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-hocsinh" class="page-section"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span&gt;Danh sách Học sinh (Lớp 12B2)&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;input type="file" id="excelInput" accept=".xlsx, .csv" style="display:none;" onchange="handleExcelUpload(event)"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;button class="btn-secondary" onclick="document.getElementById('excelInput').click()"&gt;📤 Tải Danh Sách Excel&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;&lt;span&gt;Cập nhật Danh Sách Lớp 12B2&lt;/span&gt;&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;label&gt;Dán danh sách (Mỗi dòng: SBD, Họ Tên)&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;textarea id="importStudentText" rows="3" placeholder="2201, Lê Công Đức Anh&amp;#10;2202, Phạm Ngọc Quế Anh"&gt;&lt;/textarea&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()"&gt;📥 Cập Nhật Danh Sách Học Sinh&lt;/button&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="padding: 8px;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table id="studentTable"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;thead&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;STT&lt;/th&gt;</b></span></p>
@@ -190,47 +179,20 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;2203&lt;/td&gt;&lt;td&gt;Phạm Thị Vân Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;2204&lt;/td&gt;&lt;td&gt;Trần Huỳnh Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;2205&lt;/td&gt;&lt;td&gt;Hồ Nguyễn Thanh Bảo&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;2206&lt;/td&gt;&lt;td&gt;Trần Gia Bảo B2&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tbody&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/table&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 3: THỐNG KÊ &amp; XEM ĐIỂM CHI TIẾT --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 3: THỐNG KÊ &amp; XEM ĐIỂM --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-thongke" class="page-section"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span&gt;Báo cáo &amp; Thống kê điểm thi&lt;/span&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bộ lọc theo Đề / Môn / Lớp --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng điểm trung bình cả lớp --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="grid-3"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Môn học&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;select id="filterSubject" onchange="updateStatisticsUI()"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="ALL"&gt;Tất cả môn&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="Hóa Học" selected&gt;Hóa Học&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="Toán Học"&gt;Toán Học&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/select&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Mã đề&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;select id="filterCode" onchange="updateStatisticsUI()"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="ALL"&gt;Tất cả đề&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="201" selected&gt;Đề 201&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option value="8371"&gt;Đề 8371&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/select&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Lớp&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;select&gt;&lt;option&gt;12B2&lt;/option&gt;&lt;/select&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng điểm trung bình toàn lớp --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;&lt;span style="color: #f59e0b;"&gt;Điểm Trung Bình Cả Lớp&lt;/span&gt;&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;&lt;span style="color: #f59e0b;"&gt;Điểm Trung Bình Cả Lớp (12B2)&lt;/span&gt;&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="grid-4"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-lbl"&gt;ĐTB P.I&lt;/div&gt;</b></span></p>
@@ -251,15 +213,15 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng xem điểm từng học sinh --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng điểm chi tiết từng em --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="padding: 8px;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title" style="padding: 8px 4px 0 4px;"&gt;&lt;span&gt;Chi tiết điểm từng học sinh&lt;/span&gt;&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title" style="padding: 4px;"&gt;&lt;span&gt;Chi tiết điểm từng học sinh&lt;/span&gt;&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;thead&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;SBD&lt;/th&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Họ Tên&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Mã đề&lt;/th&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Đề&lt;/th&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.I&lt;/th&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.II&lt;/th&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.III&lt;/th&gt;</b></span></p>
@@ -278,7 +240,7 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 4: LỚP HỌC --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-lop" class="page-section"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;&lt;span&gt;Danh sách Lớp học&lt;/span&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="switchTab('page-hocsinh', document.querySelectorAll('.nav-item')[1])"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="switchTab('page-hocsinh')"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h3 style="font-size: 16px; font-weight: bold;"&gt;Lớp 12B2&lt;/h3&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p style="font-size: 12px; color: #94a3b8; margin-top: 4px;"&gt;48 học sinh • Môn Hóa Học&lt;/p&gt;</b></span></p>
@@ -287,7 +249,7 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- CAMERA SCANNER FULLSCREEN OVERLAY (KHUNG ĐỨNG A5) --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- CAMERA SCANNER OVERLAY --&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="cam-modal"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div id="cam-header"&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span style="font-weight: bold; color: #f59e0b;"&gt;NKZip - Căn khung đứng A5&lt;/span&gt;</b></span></p>
@@ -326,27 +288,27 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;canvas id="canvas" style="display:none;"&gt;&lt;/canvas&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;canvas id="warpedCanvas" style="display:none;"&gt;&lt;/canvas&gt;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script&gt;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec";<span class="Apple-converted-space"> </span></b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let isOpenCvLoaded = false;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let videoStream = null;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>// Dữ liệu học sinh &amp; điểm thi lưu trong bộ nhớ</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let studentsList = [</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>{ stt: 1, sbd: "2201", name: "Lê Công Đức Anh", class: "12B2" },</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>{ stt: 2, sbd: "2202", name: "Phạm Ngọc Quế Anh", class: "12B2" },</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>{ stt: 3, sbd: "2203", name: "Phạm Thị Vân Anh", class: "12B2" },</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>{ stt: 4, sbd: "2204", name: "Trần Huỳnh Anh", class: "12B2" },</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>{ stt: 5, sbd: "2205", name: "Hồ Nguyễn Thanh Bảo", class: "12B2" }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>];</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function switchTab(pageId, navEl) {</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.page-section').forEach(p =&gt; p.classList.remove('active'));</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.nav-item').forEach(n =&gt; n.classList.remove('active'));</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById(pageId).classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navEl) navEl.classList.add('active');</b></span></p>
+<p class="p2"><span class="s1"><b><span class="Apple-converted-space">      </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navEl) {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>navEl.classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>} else {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>// Tự kích hoạt tab trên thanh dưới</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let items = document.querySelectorAll('.nav-item');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-baithi') items[0].classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-hocsinh') items[1].classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-lop') items[2].classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-thongke') items[3].classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>}</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function onOpenCvReady() {</b></span></p>
@@ -371,45 +333,33 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>}</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>// Đọc danh sách học sinh từ file Excel (.xlsx / .csv)</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function handleExcelUpload(event) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>const file = event.target.files[0];</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (!file) return;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function importStudentsList() {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let text = document.getElementById('importStudentText').value.trim();</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (!text) return alert("Vui lòng nhập hoặc dán danh sách SBD và Họ Tên!");</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>const reader = new FileReader();</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>reader.onload = function(e) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>const data = new Uint8Array(e.target.result);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>const workbook = XLSX.read(data, { type: 'array' });</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>const firstSheet = workbook.Sheets[workbook.SheetNames[0]];</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>const jsonData = XLSX.utils.sheet_to_json(firstSheet);</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let lines = text.split('\n');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let tbody = document.getElementById('studentTableBody');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>tbody.innerHTML = '';</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let tbody = document.getElementById('studentTableBody');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>tbody.innerHTML = '';</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>studentsList = [];</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>lines.forEach((line, index) =&gt; {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let parts = line.split(',');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let sbd = parts[0] ? parts[0].trim() : (2201 + index);</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let name = parts[1] ? parts[1].trim() : "Học sinh";</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>jsonData.forEach((row, index) =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>let sbd = row["SBD"] || row["Mã HS"] || (2201 + index);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>let name = row["Họ tên"] || row["Họ và tên"] || row["Name"] || "Học sinh";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>let className = row["Lớp"] || "12B2";</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>tbody.innerHTML += `&lt;tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${index + 1}&lt;/td&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${sbd}&lt;/td&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${name}&lt;/td&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;12B2&lt;/td&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tr&gt;`;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>});</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>studentsList.push({ stt: index + 1, sbd: sbd, name: name, class: className });</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>tbody.innerHTML += `&lt;tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;td&gt;${index + 1}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;td&gt;${sbd}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;td&gt;${name}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;td&gt;${className}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/tr&gt;`;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>});</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>alert(`Đã nạp thành công ${jsonData.length} học sinh từ file Excel!`);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>};</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>reader.readAsArrayBuffer(file);</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function captureAndScan() {</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navigator.vibrate) navigator.vibrate(50);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Đang xử lý nắn góc OMR...";</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Đang xử lý OMR...";</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let video = document.getElementById('video');</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let canvas = document.getElementById('canvas');</b></span></p>
@@ -424,7 +374,7 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let p1 = 4.25, p2 = 2.5, p3 = 1.75;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let total = (p1 + p2 + p3).toFixed(2);</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang lưu về Drive &amp; Sheets...`;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang đồng bộ...`;</b></span></p>
 <p class="p2"><span class="s1"><b></b></span><br></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>fetch(GAS_WEBAPP_URL, {</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>method: "POST",</b></span></p>
@@ -439,7 +389,7 @@
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>})</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.then(() =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `✓ Đã chấm xong bài em Phạm Thị Vân Anh (${total}đ)!`;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `✓ Đã lưu bài em Phạm Thị Vân Anh (${total}đ) thành công!`;</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.catch(err =&gt; {</b></span></p>
 <p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;</b></span></p>
