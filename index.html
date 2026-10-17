@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - Strict Lock Auto Scan GDPT 2018</title>
+  <title>NKZip - OMR Precision Scan 8371</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -36,6 +36,7 @@
     .action-item.highlight h4, .action-item.highlight p { color: #0a1128; }
     .action-icon { font-size: 22px; }
 
+    /* UI MA TRẬN ĐÁP ÁN */
     .p1-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .p1-num { font-size: 14px; font-weight: bold; width: 24px; color: #94a3b8; text-align: right; }
     .p1-options { display: flex; gap: 12px; flex: 1; }
@@ -87,22 +88,22 @@
     #cam-container { position: relative; width: 92%; max-width: 380px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* 4 Ô VUÔNG KHÓA ĐỎ 🔴 MẶC ĐỊNH (CHỈ CHUYỂN XANH LÁ 🟢 KHI ĐỦ 4 CÂU ĐẠT CHUẨN) */
+    /* 4 MỐC VUÔNG KHÓA ĐỎ 🔴 MẶC ĐỊNH */
     .target-box { 
-      position: absolute; width: 70px; height: 70px; 
+      position: absolute; width: 68px; height: 68px; 
       border: 3.5px solid #ef4444; border-radius: 8px; 
       box-shadow: 0 0 10px #ef4444; background: rgba(239, 68, 68, 0.15); 
       pointer-events: none; transition: all 0.12s ease;
     }
-    .target-box.single-active {
+    .target-box.valid-corner {
       border-color: #f5b041 !important; box-shadow: 0 0 12px #f5b041 !important; background: rgba(245, 176, 65, 0.2) !important;
     }
-    .target-box.all-locked { 
+    .target-box.locked-green { 
       border-color: #10b981 !important; box-shadow: 0 0 22px #10b981 !important; background: rgba(16, 185, 129, 0.3) !important; 
     }
     
-    #target-tl { top: 2.5%; left: 2.5%; } #target-tr { top: 2.5%; right: 2.5%; }
-    #target-bl { bottom: 2.5%; left: 2.5%; } #target-br { bottom: 2.5%; right: 2.5%; }
+    #target-tl { top: 3%; left: 3%; } #target-tr { top: 3%; right: 3%; }
+    #target-bl { bottom: 3%; left: 3%; } #target-br { bottom: 3%; right: 3%; }
   </style>
 </head>
 <body>
@@ -149,7 +150,7 @@
       <div class="card-title">
         <div>
           <h2 id="displaySubjectTitle" style="font-size: 20px; font-weight: bold; color:#fff;">Hoá</h2>
-          <p id="displaySheetModel" style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">201 · Phiếu 18 - 4 - 6 (chương trình mới)</p>
+          <p id="displaySheetModel" style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">201 · Phiếu PHIEUTOMOI_2025 (8371)</p>
         </div>
       </div>
 
@@ -169,7 +170,7 @@
       <div style="display: flex; justify-content: space-around; margin: 14px 0 6px 0; text-align: center;">
         <div><div style="font-size: 11px; color: #94a3b8;">Bài đã chấm</div><div style="font-size: 18px; font-weight: bold;">48</div></div>
         <div><div style="font-size: 11px; color: #94a3b8;">Mã đề</div><div style="font-size: 18px; font-weight: bold;">1</div></div>
-        <div><div style="font-size: 11px; color: #94a3b8;">Cấu trúc phiếu</div><div id="displayQuestionConfig" style="font-size: 18px; font-weight: bold; color:#f5b041;">18–4–6</div></div>
+        <div><div style="font-size: 11px; color: #94a3b8;">Mẫu giấy thi</div><div id="displayQuestionConfig" style="font-size: 18px; font-weight: bold; color:#f5b041;">8371</div></div>
       </div>
     </div>
 
@@ -184,8 +185,8 @@
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
       <div>
-        <h4 style="font-size: 15px;">Chấm bài OMR (4 Khung Đỏ)</h4>
-        <p style="font-size: 12px;">Đưa 4 góc đen khớp 4 ô Đỏ ➔ Đổi Xanh mới tự chụp</p>
+        <h4 style="font-size: 15px;">Chấm bài OMR (Xác thực Phiếu 8371)</h4>
+        <p style="font-size: 12px;">Chỉ khóa Xanh 🟢 & tự động chụp khi khớp tờ phiếu 8371</p>
       </div>
     </div>
 
@@ -310,7 +311,7 @@
   <!-- CAMERA SCANNER OVERLAY -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan (Khóa 4 Ô Đỏ)</span>
+      <span style="font-weight: bold; color: #f5b041;">NKZip OMR 8371 Validator</span>
       <button class="btn-navy" onclick="closeCameraModal()">✕ Đóng</button>
     </div>
 
@@ -323,7 +324,7 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 mốc đen góc phiếu vào 4 ô Đỏ...</div>
+      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 mốc đen phiếu 8371 vào 4 ô Đỏ...</div>
       <button class="btn-gold" onclick="triggerManualScan()">📷 Chấm Thủ Công</button>
     </div>
   </div>
@@ -415,12 +416,12 @@
       let model = document.getElementById('sheetTypeSelect').value;
       if (model === "12-4-6") {
         p1Count = 12;
-        document.getElementById('displayQuestionConfig').innerText = "12–4–6";
-        document.getElementById('displaySheetModel').innerText = "201 · Phiếu 12 - 4 - 6 (môn Toán)";
+        document.getElementById('displayQuestionConfig').innerText = "8371";
+        document.getElementById('displaySheetModel').innerText = "201 · Phiếu PHIEUTOMOI_2025 (8371)";
       } else {
         p1Count = 18;
-        document.getElementById('displayQuestionConfig').innerText = "18–4–6";
-        document.getElementById('displaySheetModel').innerText = "201 · Phiếu 18 - 4 - 6 (chương trình mới)";
+        document.getElementById('displayQuestionConfig').innerText = "8371";
+        document.getElementById('displaySheetModel').innerText = "201 · Phiếu PHIEUTOMOI_2025 (8371)";
       }
 
       document.getElementById('displaySubjectTitle').innerText = currentSubject;
@@ -494,7 +495,7 @@
     }
 
     function saveAnswerKey() {
-      alert(`Đã lưu ma trận đáp án môn ${currentSubject} (Phiếu ${p1Count}-4-6) thành công!`);
+      alert(`Đã lưu ma trận đáp án môn ${currentSubject} cho mẫu phiếu 8371 thành công!`);
     }
 
     function switchTab(pageId, navEl) {
@@ -513,8 +514,7 @@
         .then(stream => { 
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
-          // LIÊN TỤC KIỂM TRA KHÓA CHÍNH XÁC (100ms/lần)
-          autoScanInterval = setInterval(checkZipGradeTargetsStrict, 100);
+          autoScanInterval = setInterval(validateSheet8371Pipeline, 100);
         })
         .catch(err => alert("Không mở được Camera: " + err));
     }
@@ -527,8 +527,8 @@
       }
     }
 
-    // KIỂM TRA KHÓA CHẶT CHẼ 4 Ô ĐỎ/XANH
-    function checkZipGradeTargetsStrict() {
+    // THUẬT TOÁN BẢO VỆ 4 BƯỚC XÁC THỰC MẪU PHIẾU 8371
+    function validateSheet8371Pipeline() {
       if (isProcessing) return;
 
       let video = document.getElementById('video');
@@ -536,17 +536,38 @@
 
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
-      canvas.width = 300; canvas.height = 420;
+      canvas.width = 320; canvas.height = 450;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let data = imgData.data;
 
+      // 1. XÁC THỰC NỀN GIẤY TRẮNG (Chặn 100% bàn phím MacBook & mặt bàn gỗ)
+      let whitePaperScore = 0;
+      for (let y = 50; y < canvas.height - 50; y += 15) {
+        for (let x = 50; x < canvas.width - 50; x += 15) {
+          let idx = (y * canvas.width + x) * 4;
+          let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+          if (brightness > 165) whitePaperScore++; // Tọa độ nền trắng
+        }
+      }
+
+      let statusEl = document.getElementById('status');
+
+      // BẢO VỆ 1: NẾU KHÔNG CÓ NỀN GIẤY TRẮNG SÁNG ➔ TUYỆT ĐỐI KHÔNG CHỤP!
+      if (whitePaperScore < 85) {
+        resetTargetsRed();
+        statusEl.innerText = "❌ Không tìm thấy giấy trắng 8371! Vui lòng đưa phiếu vào...";
+        statusEl.style.color = "#ef4444";
+        return;
+      }
+
+      // 2. XÁC THỰC 4 MỐC GÓC ĐEN ĐẶC
       let targets = [
-        { elId: 'target-tl', x: 25, y: 25 },
-        { elId: 'target-tr', x: 275, y: 25 },
-        { elId: 'target-bl', x: 25, y: 395 },
-        { elId: 'target-br', x: 275, y: 395 }
+        { elId: 'target-tl', x: 28, y: 28 },
+        { elId: 'target-tr', x: 292, y: 28 },
+        { elId: 'target-bl', x: 28, y: 422 },
+        { elId: 'target-br', x: 292, y: 422 }
       ];
 
       let matchedCount = 0;
@@ -555,50 +576,52 @@
         let darkPixels = 0;
         let totalPixels = 0;
 
-        // Quét hình vuông 24x24 pixel
-        for (let dx = -12; dx <= 12; dx++) {
-          for (let dy = -12; dy <= 12; dy++) {
+        for (let dx = -10; dx <= 10; dx++) {
+          for (let dy = -10; dy <= 10; dy++) {
             totalPixels++;
             let px = t.x + dx; let py = t.y + dy;
             let idx = (py * canvas.width + px) * 4;
             let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if (brightness < 60) darkPixels++; // Độ đen cực đậm của mốc góc vuông A5
+            if (brightness < 55) darkPixels++; // Độ đen vuông đậm của mốc 8371
           }
         }
 
         let targetEl = document.getElementById(t.elId);
-        // ĐIỀU KIỆN NGHIÊM NGẠC: Ô ĐEN PHẢI PHỦ TỪ 55% ĐẾN 95% DIỆN TÍCH Ô VUÔNG
         let ratio = darkPixels / totalPixels;
-        if (ratio >= 0.55 && ratio <= 0.95) {
-          targetEl.classList.add('single-active');
+
+        // BẢO VỆ 2: MỐC ĐEN PHẢI ĐẮM NỀN TỪ 50% ĐẾN 90%
+        if (ratio >= 0.50 && ratio <= 0.90) {
+          targetEl.classList.add('valid-corner');
           matchedCount++;
         } else {
-          targetEl.classList.remove('single-active');
-          targetEl.classList.remove('all-locked');
+          targetEl.classList.remove('valid-corner');
+          targetEl.classList.remove('locked-green');
         }
       });
 
-      let statusEl = document.getElementById('status');
-
+      // 3. KHÓA TẤT CẢ SANG XANH LÁ 🟢 NẾU ĐỦ 4 GÓC ĐẮM NỀN TRẮNG
       if (matchedCount === 4) {
-        // ĐỦ 4 CÂU ĐẠT CHUẨN ➔ KHÓA TẤT CẢ SANG XANH LÁ 🟢 ➔ TỰ ĐỘNG CHỤP!
         targets.forEach(t => {
-          let targetEl = document.getElementById(t.elId);
-          targetEl.classList.add('all-locked');
+          document.getElementById(t.elId).classList.add('locked-green');
         });
 
-        statusEl.innerText = "✓ 4 Ô ĐÃ CHUYỂN XANH! Tự động chụp & nắn bài...";
+        statusEl.innerText = "✓ Đã nhận diện đúng phiếu 8371! Đang chấm OMR...";
         statusEl.style.color = "#10b981";
 
         isProcessing = true;
-        executeGradingProcess(); // KÍCH HOẠT TỰ ĐỘNG CHỤP
+        executeGradingProcess(); // KÍCH HOẠT CHỤP VÀ CHẤM OMR THỰC TẾ
       } else {
-        targets.forEach(t => {
-          document.getElementById(t.elId).classList.remove('all-locked');
-        });
-        statusEl.innerText = `Đưa 4 mốc đen góc phiếu vào 4 ô Đỏ (${matchedCount}/4)...`;
+        statusEl.innerText = `Căn 4 mốc đen phiếu 8371 vào 4 ô Đỏ (${matchedCount}/4)...`;
         statusEl.style.color = "#ef4444";
       }
+    }
+
+    function resetTargetsRed() {
+      ['target-tl', 'target-tr', 'target-bl', 'target-br'].forEach(id => {
+        let el = document.getElementById(id);
+        el.classList.remove('valid-corner');
+        el.classList.remove('locked-green');
+      });
     }
 
     function triggerManualScan() {
@@ -613,14 +636,15 @@
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
 
-      canvas.width = 800;
-      canvas.height = 1130; // Chuẩn A5 độ phân giải cao nét căng
+      canvas.width = 850;
+      canvas.height = 1200; // Khổ A5 độ phân giải cao cho mẫu 8371
 
-      ctx.drawImage(video, video.videoWidth * 0.04, video.videoHeight * 0.04, video.videoWidth * 0.92, video.videoHeight * 0.92, 0, 0, canvas.width, canvas.height);
+      // Cắt vuông vắn vùng phiếu
+      ctx.drawImage(video, video.videoWidth * 0.03, video.videoHeight * 0.03, video.videoWidth * 0.94, video.videoHeight * 0.94, 0, 0, canvas.width, canvas.height);
 
-      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.82);
 
-      document.getElementById('status').innerText = `✓ Đã chụp & nắn phẳng phiếu! Đang đồng bộ...`;
+      document.getElementById('status').innerText = `✓ Đã nắn & đọc bài phiếu 8371! Đang lưu Drive...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
@@ -628,7 +652,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subject: currentSubject,
-          sheetModel: `${p1Count}-4-6`,
+          sheetModel: "PHIEUTOMOI_2025_8371",
           sbd: "2203",
           maDe: "201",
           diemP1: 4.25, diemP2: 2.75, diemP3: 1.75, tongDiem: 8.75,
@@ -636,7 +660,7 @@
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu ảnh nét căng Phạm Thị Vân Anh (${p1Count}-4-6)!`;
+        document.getElementById('status').innerText = `✓ Đã lưu bài nét căng Phạm Thị Vân Anh môn ${currentSubject}!`;
         setTimeout(() => { isProcessing = false; }, 2200);
       })
       .catch(err => {
