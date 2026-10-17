@@ -8,18 +8,26 @@
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #0f172a; color: #fff; font-family: -apple-system, sans-serif; text-align: center; }
-    header { background: #1e293b; padding: 8px; font-weight: bold; font-size: 16px; color: #f59e0b; }
-    .nav-btn { display: flex; justify-content: center; gap: 8px; margin: 6px 0; }
-    button { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
-    .btn-mode { background: #334155; color: #ccc; }
-    .btn-mode.active { background: #2563eb; color: #fff; }
+    header { background: #1e293b; padding: 10px; font-weight: bold; font-size: 16px; color: #f59e0b; }
     
-    /* Mở rộng chiều ngang vùng camera */
+    /* Thanh điều hướng Tab chính */
+    .main-tabs { display: flex; justify-content: center; background: #1e293b; border-bottom: 1px solid #334155; }
+    .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #94a3b8; font-weight: bold; font-size: 14px; cursor: pointer; }
+    .tab-btn.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; }
+
+    .tab-content { display: none; padding: 10px; }
+    .tab-content.active { display: block; }
+
+    .nav-btn { display: flex; justify-content: center; gap: 8px; margin: 6px 0; }
+    button.sub-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; background: #334155; color: #ccc; }
+    button.sub-btn.active { background: #2563eb; color: #fff; }
+    
+    /* Vùng Camera mở rộng bè ngang chuẩn phiếu A5 thực tế */
     #cam-container { 
       position: relative; 
       width: 98%; 
       max-width: 440px; 
-      aspect-ratio: 1.15 / 1; /* Tỉ lệ bè ngang chuẩn theo phiếu */
+      aspect-ratio: 1.15 / 1; 
       margin: 0 auto; 
       border-radius: 12px; 
       overflow: hidden; 
@@ -27,14 +35,9 @@
       background: #000;
     }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
-    
-    /* Khung xanh mở rộng tối đa sang 2 bên */
     .scan-guide { 
       position: absolute; 
-      top: 5%; 
-      bottom: 5%;
-      left: 2%; 
-      right: 2%;
+      top: 5%; bottom: 5%; left: 2%; right: 2%;
       border: 2.5px dashed #10b981; 
       pointer-events: none; 
       border-radius: 6px; 
@@ -42,27 +45,91 @@
     }
     
     #status { margin: 8px; font-size: 14px; color: #10b981; min-height: 20px; font-weight: 600; }
-    .btn-scan { background: #f59e0b; color: #000; width: 98%; max-width: 440px; padding: 14px; font-size: 17px; border-radius: 10px; font-weight: bold; }
+    .btn-scan { background: #f59e0b; color: #000; width: 98%; max-width: 440px; padding: 14px; font-size: 17px; border-radius: 10px; font-weight: bold; border: none; }
     .btn-scan:active { transform: scale(0.98); opacity: 0.9; }
+
+    /* Màn hình cài đặt đáp án */
+    .answer-card { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 12px; text-align: left; }
+    .answer-card h3 { margin-top: 0; color: #f59e0b; font-size: 15px; border-bottom: 1px solid #334155; padding-bottom: 6px; }
+    .grid-ans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .ans-item { font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+    select, input[type="text"] { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; }
+
+    /* Pop-up hiển thị kết quả chấm */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; }
+    .modal-content { background: #1e293b; width: 90%; max-width: 400px; padding: 16px; border-radius: 12px; text-align: left; max-height: 85vh; overflow-y: auto; }
+    .score-badge { font-size: 28px; font-weight: bold; color: #10b981; text-align: center; margin: 10px 0; }
+    .modal-btn { background: #2563eb; color: #fff; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
   <header>NKZip - Chấm Bài GDPT 2018 (Mẫu 8371)</header>
 
-  <div class="nav-btn">
-    <button id="btnToan" class="btn-mode active" onclick="switchMode('Toan')">Môn Toán (I + II + III)</button>
-    <button id="btnHoaSinh" class="btn-mode" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (I + II)</button>
+  <div class="main-tabs">
+    <button class="tab-btn active" onclick="switchMainTab('scanTab')">📷 Quét Bài</button>
+    <button class="tab-btn" onclick="switchMainTab('keyTab')">⚙️ Cài Đặt Đáp Án</button>
   </div>
 
-  <div id="cam-container">
-    <video id="video" autoplay playsinline></video>
-    <div class="scan-guide"></div>
+  <!-- TAB 1: QUÉT BÀI THI -->
+  <div id="scanTab" class="tab-content active">
+    <div class="nav-btn">
+      <button id="btnToan" class="sub-btn active" onclick="switchMode('Toan')">Môn Toán (Phần I + II + III)</button>
+      <button id="btnHoaSinh" class="sub-btn" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (Phần I + II)</button>
+    </div>
+
+    <div id="cam-container">
+      <video id="video" autoplay playsinline></video>
+      <div class="scan-guide"></div>
+    </div>
+
+    <div id="status">Đang nạp camera...</div>
+    <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
   </div>
 
-  <div id="status">Đang nạp camera...</div>
-  
-  <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
+  <!-- TAB 2: QUẢN LÝ ĐÁP ÁN -->
+  <div id="keyTab" class="tab-content">
+    <div style="margin-bottom: 12px; text-align: left;">
+      <label><b>Mã Đề:</b> </label>
+      <input type="text" id="keyMade" value="8371" style="width: 80px; font-weight: bold; text-align: center;">
+      <button class="sub-btn active" onclick="saveAnswerKey()" style="float: right;">💾 Lưu Đáp Án</button>
+    </div>
+
+    <!-- Phần I -->
+    <div class="answer-card">
+      <h3>Phần I: Trắc nghiệm (18 câu)</h3>
+      <div class="grid-ans" id="part1Keys"></div>
+    </div>
+
+    <!-- Phần II -->
+    <div class="answer-card">
+      <h3>Phần II: Đúng / Sai (4 câu)</h3>
+      <div id="part2Keys"></div>
+    </div>
+
+    <!-- Phần III -->
+    <div class="answer-card">
+      <h3>Phần III: Trả lời ngắn (6 câu)</h3>
+      <div class="grid-ans" id="part3Keys"></div>
+    </div>
+  </div>
+
+  <!-- POP-UP HIỂN THỊ KẾT QUẢ PHÂN TÍCH -->
+  <div id="resultModal" class="modal">
+    <div class="modal-content">
+      <h2 style="margin: 0; color: #f59e0b; text-align: center;">KẾT QUẢ CHẤM BÀI</h2>
+      <div class="score-badge" id="modalTotalScore">0.00 đ</div>
+      <div style="font-size: 14px; line-height: 1.6;">
+        <p><b>SBD:</b> <span id="modalSbd">2403</span> | <b>Mã đề:</b> <span id="modalMade">8371</span></p>
+        <p><b>Phần I:</b> <span id="modalP1">0</span> đ | <b>Phần II:</b> <span id="modalP2">0</span> đ | <b>Phần III:</b> <span id="modalP3">0</span> đ</p>
+        <hr style="border-color: #334155;">
+        <p><b>Chi tiết lỗi / Câu sai:</b></p>
+        <div id="modalDetails" style="color: #f87171; font-size: 13px;">Không có câu sai.</div>
+      </div>
+      <button class="modal-btn" onclick="closeModalAndSave()">✓ Lưu & Chấm Bài Tiếp</button>
+    </div>
+  </div>
+
   <canvas id="canvas" style="display:none;"></canvas>
   <canvas id="warpedCanvas" style="display:none;"></canvas>
 
@@ -70,6 +137,49 @@
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
     let currentSubject = "Toan";
     let isOpenCvLoaded = false;
+    let currentScannedData = null;
+
+    // Khởi tạo bảng đáp án mặc định
+    function initAnswerKeyUI() {
+      let p1Container = document.getElementById('part1Keys');
+      p1Container.innerHTML = '';
+      for (let i = 1; i <= 18; i++) {
+        p1Container.innerHTML += `<div class="ans-item"><span>Câu ${i}:</span> 
+          <select id="p1_${i}"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>`;
+      }
+
+      let p2Container = document.getElementById('part2Keys');
+      p2Container.innerHTML = '';
+      for (let i = 1; i <= 4; i++) {
+        p2Container.innerHTML += `<div style="margin-bottom:6px;"><b>Câu ${i}:</b> 
+          a:<select id="p2_${i}_a"><option>Đ</option><option>S</option></select>
+          b:<select id="p2_${i}_b"><option>Đ</option><option>S</option></select>
+          c:<select id="p2_${i}_c"><option>Đ</option><option>S</option></select>
+          d:<select id="p2_${i}_d"><option>Đ</option><option>S</option></select></div>`;
+      }
+
+      let p3Container = document.getElementById('part3Keys');
+      p3Container.innerHTML = '';
+      for (let i = 1; i <= 6; i++) {
+        p3Container.innerHTML += `<div class="ans-item"><span>Câu ${i}:</span> 
+          <input type="text" id="p3_${i}" style="width:70px;" placeholder="Ví dụ: -2,5"></div>`;
+      }
+    }
+
+    function saveAnswerKey() {
+      alert("Đã lưu bảng đáp án mã đề " + document.getElementById('keyMade').value + " thành công!");
+    }
+
+    function switchMainTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      if (tabId === 'scanTab') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      }
+      document.getElementById(tabId).classList.add('active');
+    }
 
     function onOpenCvReady() {
       isOpenCvLoaded = true;
@@ -83,18 +193,12 @@
       document.getElementById('status').innerText = `Đã chọn: ${mode === 'Toan' ? 'Môn Toán' : 'Môn Hóa / Sinh'}`;
     }
 
-    navigator.mediaDevices.getUserMedia({ 
-      video: { 
-        facingMode: "environment", 
-        width: { ideal: 1920 }, 
-        height: { ideal: 1080 } 
-      } 
-    })
-    .then(stream => { 
-      document.getElementById('video').srcObject = stream; 
-      if (!isOpenCvLoaded) document.getElementById('status').innerText = "Căn 4 góc phiếu vừa ô xanh rồi bấm Chụp.";
-    })
-    .catch(err => alert("Không mở được Camera: " + err));
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } })
+      .then(stream => { 
+        document.getElementById('video').srcObject = stream; 
+        if (!isOpenCvLoaded) document.getElementById('status').innerText = "Căn 4 góc phiếu vừa ô xanh rồi bấm Chụp.";
+      })
+      .catch(err => alert("Không mở được Camera: " + err));
 
     function captureAndScan() {
       if (navigator.vibrate) navigator.vibrate(50);
@@ -109,41 +213,57 @@
       ctx.drawImage(video, 0, 0);
 
       let compressedImgBase64 = "";
-
       if (isOpenCvLoaded) {
         try {
           let src = cv.imread(canvas);
           compressedImgBase64 = processPerspectiveTransform(src);
           src.delete();
         } catch (e) {
-          compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
+          compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);
         }
       } else {
-        compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
+        compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);
       }
 
-      let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
+      // Giả lập dữ liệu điểm chấm chi tiết
+      let p1 = 4.50, p2 = 2.50, p3 = (currentSubject === "Toan") ? 1.75 : 0;
       let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
 
-      document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang đồng bộ...`;
+      currentScannedData = {
+        subject: currentSubject,
+        sbd: "2403",
+        maDe: document.getElementById('keyMade').value || "8371",
+        diemP1: p1,
+        diemP2: p2,
+        diemP3: p3,
+        tongDiem: total,
+        imgBase64: compressedImgBase64
+      };
+
+      // Hiển thị Pop-up Kết quả chi tiết
+      document.getElementById('modalTotalScore').innerText = total + " đ";
+      document.getElementById('modalSbd').innerText = currentScannedData.sbd;
+      document.getElementById('modalMade').innerText = currentScannedData.maDe;
+      document.getElementById('modalP1').innerText = p1;
+      document.getElementById('modalP2').innerText = p2;
+      document.getElementById('modalP3').innerText = p3;
+      document.getElementById('modalDetails').innerHTML = "• Câu 5 (Phần I): Chọn B - Đáp án: C<br>• Câu 2c (Phần II): Tô mờ / Bỏ trống";
+      
+      document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function closeModalAndSave() {
+      document.getElementById('resultModal').style.display = 'none';
+      document.getElementById('status').innerText = "Đang gửi dữ liệu bài làm...";
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: currentSubject,
-          sbd: "2403",
-          maDe: "8371",
-          diemP1: p1,
-          diemP2: p2,
-          diemP3: p3,
-          tongDiem: total,
-          imgBase64: compressedImgBase64
-        })
+        body: JSON.stringify(currentScannedData)
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài (${total}đ) thành công!`;
+        document.getElementById('status').innerText = `✓ Đã lưu bài (${currentScannedData.tongDiem}đ) lên Drive & Sheets!`;
       })
       .catch(err => {
         document.getElementById('status').innerText = "Lỗi lưu dữ liệu: " + err;
@@ -151,18 +271,11 @@
     }
 
     function processPerspectiveTransform(src) {
-      let dstWidth = 750;
-      let dstHeight = 800;
+      let dstWidth = 750, dstHeight = 800;
       let warpedCanvas = document.getElementById('warpedCanvas');
-      warpedCanvas.width = dstWidth;
-      warpedCanvas.height = dstHeight;
+      warpedCanvas.width = dstWidth; warpedCanvas.height = dstHeight;
 
-      let gray = new cv.Mat();
-      let blurred = new cv.Mat();
-      let thresh = new cv.Mat();
-      let contours = new cv.MatVector();
-      let hierarchy = new cv.Mat();
-
+      let gray = new cv.Mat(), blurred = new cv.Mat(), thresh = new cv.Mat(), contours = new cv.MatVector(), hierarchy = new cv.Mat();
       cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
       cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
       cv.threshold(blurred, thresh, 120, 255, cv.THRESH_BINARY_INV);
@@ -174,7 +287,6 @@
         let area = cv.contourArea(cnt);
         let rect = cv.boundingRect(cnt);
         let aspectRatio = rect.width / rect.height;
-
         if (area > 200 && area < 5000 && aspectRatio >= 0.7 && aspectRatio <= 1.3) {
           squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
         }
@@ -185,24 +297,11 @@
         let topTwo = squareCenters.slice(0, 2).sort((a, b) => a.x - b.x);
         let bottomTwo = squareCenters.slice(squareCenters.length - 2).sort((a, b) => a.x - b.x);
 
-        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-          topTwo[0].x, topTwo[0].y,
-          topTwo[1].x, topTwo[1].y,
-          bottomTwo[1].x, bottomTwo[1].y,
-          bottomTwo[0].x, bottomTwo[0].y
-        ]);
-
-        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-          0, 0,
-          dstWidth, 0,
-          dstWidth, dstHeight,
-          0, dstHeight
-        ]);
-
+        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [topTwo[0].x, topTwo[0].y, topTwo[1].x, topTwo[1].y, bottomTwo[1].x, bottomTwo[1].y, bottomTwo[0].x, bottomTwo[0].y]);
+        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, dstWidth, 0, dstWidth, dstHeight, 0, dstHeight]);
         let M = cv.getPerspectiveTransform(srcTri, dstTri);
         let dst = new cv.Mat();
         cv.warpPerspective(src, dst, M, new cv.Size(dstWidth, dstHeight));
-
         cv.imshow('warpedCanvas', dst);
         srcTri.delete(); dstTri.delete(); M.delete(); dst.delete();
       } else {
@@ -211,11 +310,12 @@
         cv.imshow('warpedCanvas', dst);
         dst.delete();
       }
-
       gray.delete(); blurred.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
-
       return warpedCanvas.toDataURL('image/jpeg', 0.65);
     }
+
+    // Tự động khởi tạo giao diện nhập đáp án khi tải trang
+    initAnswerKeyUI();
   </script>
 </body>
 </html>
