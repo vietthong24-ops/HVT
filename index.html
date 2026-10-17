@@ -24,24 +24,31 @@
     .card { background: #111d3d; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #1e2d5a; }
     .card-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #ffffff; display: flex; justify-content: space-between; align-items: center; }
 
+    label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 8px; }
+    input, select, textarea { width: 100%; background: #0a1128; border: 1px solid #2a3b6e; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; }
+
+    /* Subject Selector Pills */
+    .subject-pills { display: flex; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+    .pill-btn { flex: 1; padding: 10px; background: #0a1128; border: 1px solid #2a3b6e; color: #94a3b8; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; }
+    .pill-btn.active { background: #f5b041; color: #0a1128; border-color: #f5b041; }
+
     /* Buttons NKZip Style */
     .btn-gold { background: #f5b041; color: #0a1128; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; }
     .btn-navy { background: #162447; color: #38bdf8; border: 1px solid #1e2d5a; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .btn-outline { background: transparent; color: #ffffff; border: 1px solid #2a3b6e; padding: 6px 12px; border-radius: 8px; font-size: 12px; }
 
     .action-item { background: #111d3d; border: 1px solid #1e2d5a; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .action-item.highlight { background: #f5b041; color: #0a1128; border: none; }
     .action-item.highlight h4, .action-item.highlight p { color: #0a1128; }
     .action-icon { font-size: 22px; }
 
-    /* UI ĐÁP ÁN PHẦN I (Tròn chọn màu Vàng chuẩn Ảnh 8) */
+    /* UI ĐÁP ÁN PHẦN I (Tròn chọn màu Vàng) */
     .p1-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .p1-num { font-size: 14px; font-weight: bold; width: 24px; color: #94a3b8; text-align: right; }
     .p1-options { display: flex; gap: 12px; flex: 1; }
     .opt-circle { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #2a3b6e; background: #0a1128; color: #fff; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .opt-circle.selected { background: #f5b041; color: #0a1128; border-color: #f5b041; }
 
-    /* UI ĐÁP ÁN PHẦN II (4 Card Đúng/Sai chuẩn Ảnh 7) */
+    /* UI ĐÁP ÁN PHẦN II */
     .p2-card { background: #111d3d; border: 1px solid #1e2d5a; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
     .p2-title { font-size: 14px; font-weight: bold; color: #ffffff; margin-bottom: 8px; }
     .p2-subrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
@@ -50,12 +57,12 @@
     .tf-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #2a3b6e; background: #0a1128; color: #fff; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .tf-btn.selected { background: #f5b041; color: #0a1128; border-color: #f5b041; }
 
-    /* UI ĐÁP ÁN PHẦN III (Ô Điền Số Chuẩn Ảnh 7) */
+    /* UI ĐÁP ÁN PHẦN III */
     .p3-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .p3-num { font-size: 13px; font-weight: bold; color: #94a3b8; width: 20px; }
     .p3-input { flex: 1; background: #0a1128; border: 1px solid #2a3b6e; color: #fff; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; }
 
-    /* UI THỐNG KÊ BIỂU ĐỒ (Chuẩn Ảnh 3 & 10) */
+    /* UI THỐNG KÊ BIỂU ĐỒ */
     .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
     .stat-box { background: #0a1128; border: 1px solid #1e2d5a; border-radius: 8px; padding: 8px; text-align: center; }
     .stat-num { font-size: 18px; font-weight: bold; color: #ffffff; }
@@ -82,13 +89,28 @@
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1128; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; }
     
-    #cam-container { position: relative; width: 90%; max-width: 370px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
+    #cam-container { position: relative; width: 92%; max-width: 380px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    .target-box { position: absolute; width: 38px; height: 38px; border: 3px solid #10b981; border-radius: 6px; box-shadow: 0 0 8px #10b981; background: rgba(16, 185, 129, 0.15); pointer-events: none; }
-    .target-box.active { background: #10b981 !important; box-shadow: 0 0 15px #10b981 !important; }
-    #target-tl { top: 3.5%; left: 3.5%; } #target-tr { top: 3.5%; right: 3.5%; }
-    #target-bl { bottom: 3.5%; left: 3.5%; } #target-br { bottom: 3.5%; right: 3.5%; }
+    /* 4 Ô VUÔNG XANH MỤC TIÊU - TĂNG KÍCH THƯỚC GẤP ĐÔI (76px x 76px) */
+    .target-box { 
+      position: absolute; 
+      width: 76px; 
+      height: 76px; 
+      border: 3.5px solid #10b981; 
+      border-radius: 8px; 
+      box-shadow: 0 0 12px #10b981; 
+      background: rgba(16, 185, 129, 0.15); 
+      pointer-events: none; 
+      transition: all 0.1s ease;
+    }
+    .target-box.active { background: #10b981 !important; box-shadow: 0 0 20px #10b981 !important; }
+    
+    /* Căn lề rộng rãi cho ô 76px */
+    #target-tl { top: 2%; left: 2%; } 
+    #target-tr { top: 2%; right: 2%; }
+    #target-bl { bottom: 2%; left: 2%; } 
+    #target-br { bottom: 2%; right: 2%; }
   </style>
 </head>
 <body>
@@ -102,24 +124,38 @@
     <div class="user-name">Hồ Viết Thống</div>
   </header>
 
-  <!-- TAB 1: BÀI THI CHI TIẾT (Trang chính Bài Thi chuẩn Ảnh 2 & 4) -->
+  <!-- TAB 1: BÀI THI CHI TIẾT -->
   <div id="page-baithi" class="page-section active">
     <div class="card">
       <div class="card-title">
         <div>
-          <h2 style="font-size: 20px; font-weight: bold; color:#fff;">Hoá</h2>
-          <p style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">201 · Phiếu 18 - 4 - 6 (chương trình mới)</p>
+          <h2 id="displaySubjectTitle" style="font-size: 20px; font-weight: bold; color:#fff;">Hoá</h2>
+          <p id="displaySheetModel" style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">201 · Phiếu 18 - 4 - 6 (chương trình mới)</p>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-around; margin: 10px 0; text-align: center;">
+      <!-- Bộ chọn Môn & Mẫu Phiếu Giấy -->
+      <label>Chọn môn học:</label>
+      <div class="subject-pills">
+        <div id="pill-Toan" class="pill-btn" onclick="selectSubject('Toán')">Môn Toán</div>
+        <div id="pill-Hoa" class="pill-btn active" onclick="selectSubject('Hóa')">Môn Hóa</div>
+        <div id="pill-Sinh" class="pill-btn" onclick="selectSubject('Sinh')">Môn Sinh</div>
+      </div>
+
+      <label>Chọn cấu hình loại phiếu thi A5:</label>
+      <select id="sheetTypeSelect" onchange="changeSheetModel()">
+        <option value="18-4-6">Phiếu Hóa - Sinh - Lý (18 câu P1 - 4 câu P2 - 6 câu P3)</option>
+        <option value="12-4-6">Phiếu Toán (12 câu P1 - 4 câu P2 - 6 câu P3)</option>
+      </select>
+
+      <div style="display: flex; justify-content: space-around; margin: 14px 0 6px 0; text-align: center;">
         <div><div style="font-size: 11px; color: #94a3b8;">Bài đã chấm</div><div style="font-size: 18px; font-weight: bold;">48</div></div>
         <div><div style="font-size: 11px; color: #94a3b8;">Mã đề</div><div style="font-size: 18px; font-weight: bold;">1</div></div>
-        <div><div style="font-size: 11px; color: #94a3b8;">Số câu</div><div style="font-size: 18px; font-weight: bold; color:#f5b041;">18–4–6</div></div>
+        <div><div style="font-size: 11px; color: #94a3b8;">Cấu trúc phiếu</div><div id="displayQuestionConfig" style="font-size: 18px; font-weight: bold; color:#f5b041;">18–4–6</div></div>
       </div>
     </div>
 
-    <!-- Action Menu (Chuẩn Ảnh 2) -->
+    <!-- Action Menu -->
     <div class="action-item" onclick="switchTab('page-dapan')">
       <div class="action-icon">✏️</div>
       <div>
@@ -153,10 +189,10 @@
     </div>
   </div>
 
-  <!-- TAB 2: CÀI ĐẶT ĐÁP ÁN (Giao diện chuẩn Ảnh 7 & 8) -->
+  <!-- TAB 2: CÀI ĐẶT ĐÁP ÁN -->
   <div id="page-dapan" class="page-section">
     <div style="margin-bottom: 12px;">
-      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Đáp án</h3>
+      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Đáp án Môn <span id="lblCurrentSub" style="color:#f5b041;">Hóa</span></h3>
       <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
         <span style="font-size: 13px;">Mã đề:</span>
         <button class="btn-navy" style="background:#f5b041; color:#0a1128; font-weight:bold;">A</button>
@@ -167,34 +203,34 @@
 
     <div style="display: flex; gap: 8px; margin-bottom: 14px;">
       <button class="btn-navy" style="flex:1;">📷 Quét phiếu đáp án</button>
-      <button class="btn-navy" style="flex:1;">̂ Nhập từ Excel</button>
+      <button class="btn-navy" style="flex:1;">Nhập từ Excel</button>
     </div>
 
-    <!-- PHẦN I: 18 CÂU TRẮC NGHIỆM (Chuẩn Ảnh 8) -->
+    <!-- PHẦN I -->
     <div class="card">
-      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN I (Bấm để chọn đáp án)</h4>
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN I (<span id="lblPart1Count">18</span> CÂU TRẮC NGHIỆM)</h4>
       <div id="part1Matrix"></div>
     </div>
 
-    <!-- PHẦN II: CÂU HỎI ĐÚNG / SAI (Chuẩn Ảnh 7) -->
+    <!-- PHẦN II -->
     <div class="card">
-      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN II (Chọn Đ hoặc S cho từng ý)</h4>
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN II (4 CÂU ĐÚNG / SAI)</h4>
       <div class="grid-2" id="part2Matrix"></div>
     </div>
 
-    <!-- PHẦN III: TRẢ LỜI NGẮN (Chuẩn Ảnh 7) -->
+    <!-- PHẦN III -->
     <div class="card">
-      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 6px;">PHẦN III (Tối đa 4 kí tự, ví dụ: 9,05)</h4>
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 6px;">PHẦN III (6 CÂU TRẢ LỜI NGẮN)</h4>
       <div id="part3Matrix"></div>
     </div>
 
     <button class="btn-gold" onclick="saveAnswerKey()">💾 Lưu Toàn Bộ Đáp Án</button>
   </div>
 
-  <!-- TAB 3: THỐNG KÊ & BẢNG ĐIỂM (Chuẩn Ảnh 3 & 6) -->
+  <!-- TAB 3: THỐNG KÊ & BẢNG ĐIỂM -->
   <div id="page-thongke" class="page-section">
     <div class="card">
-      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Báo cáo điểm môn Hoá</h3>
+      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Báo cáo điểm môn <span id="lblSubReport">Hóa</span></h3>
       
       <div class="stat-grid">
         <div class="stat-box"><div class="stat-num">48</div><div class="stat-label">Số bài</div></div>
@@ -205,7 +241,6 @@
         <div class="stat-box"><div class="stat-num">1,19</div><div class="stat-label">TB Phần III</div></div>
       </div>
 
-      <!-- Biểu đồ phân bố điểm chuẩn Ảnh 6 -->
       <div class="chart-container">
         <div class="chart-bar-wrap"><div class="chart-bar" style="height: 0%;"></div><div class="chart-label">0-1</div></div>
         <div class="chart-bar-wrap"><div class="chart-bar" style="height: 0%;"></div><div class="chart-label">2-3</div></div>
@@ -217,7 +252,6 @@
       </div>
     </div>
 
-    <!-- Bảng danh sách bài làm chi tiết chuẩn Ảnh 3 -->
     <div class="card" style="padding: 8px;">
       <table>
         <thead>
@@ -240,7 +274,7 @@
     </div>
   </div>
 
-  <!-- TAB 4: HỌC SINH & LỚP (Chuẩn Ảnh 1, 5, 9) -->
+  <!-- TAB 4: HỌC SINH & LỚP -->
   <div id="page-hocsinh" class="page-section">
     <div class="card-title"><span>Danh sách Học sinh 12B2</span></div>
     <div class="card" style="padding: 8px;">
@@ -259,15 +293,16 @@
     </div>
   </div>
 
-  <!-- CAMERA SCANNER OVERLAY -->
+  <!-- CAMERA SCANNER OVERLAY (4 Ô VUÔNG XANH LỚN 76PX) -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan</span>
+      <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan (Ô Vuông 76px)</span>
       <button class="btn-navy" onclick="closeCameraModal()">✕ Đóng</button>
     </div>
 
     <div id="cam-container">
       <video id="video" autoplay playsinline></video>
+      <!-- 4 Ô VUÔNG XANH LỚN GẤP ĐÔI -->
       <div id="target-tl" class="target-box"></div>
       <div id="target-tr" class="target-box"></div>
       <div id="target-bl" class="target-box"></div>
@@ -275,12 +310,12 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 ô đen góc phiếu vào 4 ô xanh...</div>
+      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 ô đen góc phiếu lọt vào 4 ô xanh to...</div>
       <button class="btn-gold" onclick="triggerManualScan()">📷 Chấm Bài Ngay</button>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR (Chuẩn Ảnh 1, 2, 3, 4, 5, 6, 7, 8, 9) -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
     <div class="nav-item" onclick="switchTab('page-baithi', this)">
       <div class="nav-icon">✏️</div>
@@ -304,15 +339,55 @@
 
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
+    let currentSubject = "Hóa";
+    let p1Count = 18; // Mặc định 18 câu cho Hóa/Sinh
     let videoStream = null;
     let autoScanInterval = null;
     let isProcessing = false;
 
-    // Render Ma trận đáp án Phần I chuẩn Ảnh 8
+    function selectSubject(sub) {
+      currentSubject = sub;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      
+      if (sub === 'Toán') {
+        document.getElementById('pill-Toan').classList.add('active');
+        document.getElementById('sheetTypeSelect').value = "12-4-6";
+      } else if (sub === 'Hóa') {
+        document.getElementById('pill-Hoa').classList.add('active');
+        document.getElementById('sheetTypeSelect').value = "18-4-6";
+      } else {
+        document.getElementById('pill-Sinh').classList.add('active');
+        document.getElementById('sheetTypeSelect').value = "18-4-6";
+      }
+
+      changeSheetModel();
+    }
+
+    function changeSheetModel() {
+      let model = document.getElementById('sheetTypeSelect').value;
+      if (model === "12-4-6") {
+        p1Count = 12;
+        document.getElementById('displayQuestionConfig').innerText = "12–4–6";
+        document.getElementById('displaySheetModel').innerText = "201 · Phiếu 12 - 4 - 6 (môn Toán)";
+      } else {
+        p1Count = 18;
+        document.getElementById('displayQuestionConfig').innerText = "18–4–6";
+        document.getElementById('displaySheetModel').innerText = "201 · Phiếu 18 - 4 - 6 (chương trình mới)";
+      }
+
+      document.getElementById('displaySubjectTitle').innerText = currentSubject;
+      document.getElementById('lblCurrentSub').innerText = currentSubject;
+      document.getElementById('lblSubReport').innerText = currentSubject;
+      document.getElementById('lblPart1Count').innerText = p1Count;
+
+      renderPart1();
+    }
+
+    // Render Phần I theo p1Count (12 hoặc 18 câu)
     function renderPart1() {
       let container = document.getElementById('part1Matrix');
       container.innerHTML = '';
-      for (let i = 1; i <= 18; i++) {
+      for (let i = 1; i <= p1Count; i++) {
         container.innerHTML += `
           <div class="p1-row">
             <div class="p1-num">${i}</div>
@@ -326,7 +401,6 @@
       }
     }
 
-    // Render Ma trận đáp án Phần II chuẩn Ảnh 7
     function renderPart2() {
       let container = document.getElementById('part2Matrix');
       container.innerHTML = '';
@@ -347,7 +421,6 @@
       }
     }
 
-    // Render Ma trận đáp án Phần III chuẩn Ảnh 7
     function renderPart3() {
       let container = document.getElementById('part3Matrix');
       let defaultVal = ['2', '1235', '884', '9,05', '3,84', '7,4'];
@@ -374,7 +447,7 @@
     }
 
     function saveAnswerKey() {
-      alert("Đã lưu ma trận đáp án bài thi Hoá thành công!");
+      alert(`Đã lưu ma trận đáp án môn ${currentSubject} (Phiếu ${p1Count}-4-6) thành công!`);
     }
 
     function switchTab(pageId, navEl) {
@@ -407,6 +480,7 @@
       }
     }
 
+    // KIỂM TRA ĐỘ ĐEN TRONG 4 Ô VUÔNG XANH TO (76PX)
     function checkZipGradeTargets() {
       if (isProcessing) return;
 
@@ -421,32 +495,33 @@
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let data = imgData.data;
 
+      // 4 Vùng kiểm tra với diện tích rộng bao dung hơn
       let targets = [
-        { elId: 'target-tl', x: 20, y: 20 },
-        { elId: 'target-tr', x: 280, y: 20 },
-        { elId: 'target-bl', x: 20, y: 400 },
-        { elId: 'target-br', x: 280, y: 400 }
+        { elId: 'target-tl', x: 25, y: 25 },
+        { elId: 'target-tr', x: 275, y: 25 },
+        { elId: 'target-bl', x: 25, y: 395 },
+        { elId: 'target-br', x: 275, y: 395 }
       ];
 
       let matchedCount = 0;
       targets.forEach(t => {
         let darkPixels = 0;
-        for (let dx = -8; dx <= 8; dx++) {
-          for (let dy = -8; dy <= 8; dy++) {
+        for (let dx = -14; dx <= 14; dx++) {
+          for (let dy = -14; dy <= 14; dy++) {
             let px = t.x + dx; let py = t.y + dy;
             let idx = (py * canvas.width + px) * 4;
             let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if (brightness < 90) darkPixels++;
+            if (brightness < 95) darkPixels++;
           }
         }
         let targetEl = document.getElementById(t.elId);
-        if (darkPixels > 35) { targetEl.classList.add('active'); matchedCount++; }
+        if (darkPixels > 80) { targetEl.classList.add('active'); matchedCount++; }
         else { targetEl.classList.remove('active'); }
       });
 
       let statusEl = document.getElementById('status');
       if (matchedCount === 4) {
-        statusEl.innerText = "✓ Đã khớp 4 góc! Tự động chấm bài...";
+        statusEl.innerText = "✓ Khớp 4 góc! Tự động chấm bài...";
         statusEl.style.color = "#10b981";
         isProcessing = true;
         executeGradingProcess();
@@ -471,14 +546,15 @@
 
       let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
-      document.getElementById('status').innerText = "✓ Đã chấm xong: 8,75đ! Đang đồng bộ...";
+      document.getElementById('status').innerText = `✓ Đã chấm xong môn ${currentSubject}! Đang đồng bộ...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: "Hóa",
+          subject: currentSubject,
+          sheetModel: `${p1Count}-4-6`,
           sbd: "2203",
           maDe: "201",
           diemP1: 4.25, diemP2: 2.75, diemP3: 1.75, tongDiem: 8.75,
@@ -486,7 +562,7 @@
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = "✓ Đã lưu bài thành công (8,75đ)!";
+        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh môn ${currentSubject} (${p1Count}-4-6)!`;
         setTimeout(() => { isProcessing = false; }, 1800);
       })
       .catch(err => {
@@ -495,8 +571,8 @@
       });
     }
 
-    // Khởi tạo các bảng giao diện ngay khi tải trang
-    renderPart1();
+    // Khởi tạo
+    changeSheetModel();
     renderPart2();
     renderPart3();
   </script>
