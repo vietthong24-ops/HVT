@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>App Chấm Bài GDPT 2018</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+  <style>
+    body { margin: 0; background: #0f172a; color: #fff; font-family: -apple-system, sans-serif; text-align: center; }
+    header { background: #1e293b; padding: 12px; font-weight: bold; font-size: 18px; color: #f59e0b; }
+    .nav-btn { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
+    button { padding: 10px 16px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-mode { background: #334155; color: #ccc; }
+    .btn-mode.active { background: #2563eb; color: #fff; }
+    #cam-container { position: relative; width: 92%; max-width: 450px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #334155; }
+    video { width: 100%; display: block; }
+    .corner-box { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; border: 3px dashed #10b981; pointer-events: none; border-radius: 8px; }
+    #status { margin: 12px; font-size: 15px; color: #10b981; min-height: 20px; }
+    .btn-scan { background: #f59e0b; color: #000; width: 90%; max-width: 400px; padding: 14px; font-size: 18px; border-radius: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <header>NKZip - Chấm Bài GDPT 2018</header>
+
+  <div class="nav-btn">
+    <button id="btnToan" class="btn-mode active" onclick="switchMode('Toan')">Môn Toán (Phần I + II + III)</button>
+    <button id="btnHoaSinh" class="btn-mode" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (Phần I + II)</button>
+  </div>
+
+  <div id="cam-container">
+    <video id="video" autoplay playsinline></video>
+    <div class="corner-box"></div>
+  </div>
+
+  <div id="status">Sẵn sàng quét phiếu...</div>
+  
+  <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script>
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
+    let currentSubject = "Toan";
+
+    function switchMode(mode) {
+      currentSubject = mode;
+      document.getElementById('btnToan').classList.toggle('active', mode === 'Toan');
+      document.getElementById('btnHoaSinh').classList.toggle('active', mode === 'HoaSinh');
+      document.getElementById('status').innerText = `Đã chọn: ${mode === 'Toan' ? 'Môn Toán' : 'Môn Hóa / Sinh'}`;
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => { document.getElementById('video').srcObject = stream; })
+      .catch(err => alert("Lỗi camera: " + err));
+
+    function captureAndScan() {
+      document.getElementById('status').innerText = "Đang xử lý ảnh...";
+      
+      let video = document.getElementById('video');
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      let src = cv.imread(canvas);
+      let gray = new cv.Mat();
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+      let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
+      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
+
+      document.getElementById('status').innerText = `Chấm xong: ${total} điểm. Đang đồng bộ...`;
+
+      fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: currentSubject,
+          sbd: "2403",
+          maDe: "101",
+          diemP1: p1,
+          diemP2: p2,
+          diemP3: p3,
+          tongDiem: total,
+          imgBase64: canvas.toDataURL('image/jpeg', 0.8)
+        })
+      })
+      .then(() => {
+        document.getElementById('status').innerText = `Đã lưu bài (${total}đ) vào Drive & Sheets!`;
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
+      });
+
+      src.delete(); gray.delete();
+    }
+  </script>
+</body>
+</html>
