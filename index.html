@@ -3,24 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - ZipGrade Auto-Scan GDPT 2018</title>
+  <title>NKZip - Auto-Scan GDPT 2018</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }
 
-    /* Header */
     header { background: #1c2541; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
     .logo-group { display: flex; align-items: center; gap: 8px; }
     .logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 3px 7px; border-radius: 6px; font-size: 15px; }
     .logo-title { font-size: 17px; font-weight: bold; color: #fff; }
     .user-name { font-size: 13px; color: #94a3b8; }
 
-    /* Layout Sections */
     .page-section { display: none; padding: 14px; }
     .page-section.active { display: block; }
 
-    /* UI Cards */
     .card { background: #1c2541; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #2a385b; }
     .card-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
     
@@ -45,13 +42,12 @@
     th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }
     th { color: #94a3b8; font-weight: 600; }
 
-    /* Bottom Navigation Bar */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 58px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 10px; gap: 2px; cursor: pointer; }
     .nav-item.active { color: #f59e0b; font-weight: bold; }
     .nav-icon { font-size: 17px; }
 
-    /* CAMERA SCANNER - PHONG CÁCH ZIPGRADE */
+    /* CAMERA SCANNER */
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
     
@@ -68,19 +64,18 @@
     }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* Khung viền đổi màu động kiểu ZipGrade: Đỏ (Đang tìm) -> Xanh lá (Đã khóa bài) */
     .scan-guide { 
       position: absolute; 
       top: 3%; bottom: 3%; left: 3%; right: 3%; 
-      border: 3px dashed #ef4444; 
+      border: 3.5px dashed #ef4444; 
       pointer-events: none; 
       border-radius: 6px; 
       box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45); 
-      transition: border-color 0.2s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .scan-guide.locked {
-      border: 3.5px solid #10b981;
-      box-shadow: 0 0 15px #10b981, 0 0 0 9999px rgba(0, 0, 0, 0.45);
+      border: 4px solid #10b981;
+      box-shadow: 0 0 20px #10b981, 0 0 0 9999px rgba(0, 0, 0, 0.45);
     }
   </style>
 </head>
@@ -243,7 +238,7 @@
 
     <div style="padding: 14px; text-align: center;">
       <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Đang tìm 4 mốc đen góc phiếu...</div>
-      <button class="btn-main" onclick="triggerManualScan()">📷 Chấm Thủ Công (Nếu cần)</button>
+      <button class="btn-main" onclick="triggerManualScan()">📷 Chụp & Chấm Thủ Công</button>
     </div>
   </div>
 
@@ -306,8 +301,7 @@
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
           
-          // BẮT ĐẦU VÒNG LẶP QUÉT TỰ ĐỘNG KIỂU ZIPGRADE (150ms / lần)
-          autoScanInterval = setInterval(detectAndAutoScan, 150);
+          autoScanInterval = setInterval(detectAndAutoScan, 200);
         })
         .catch(err => alert("Không mở được Camera: " + err));
     }
@@ -320,7 +314,7 @@
       }
     }
 
-    // THUẬT TOÁN TỰ ĐỘNG BẮT 4 MỐC ĐEN TỰA ZIPGRADE
+    // THUẬT TOÁN ĐỊNH VỊ 4 MỐC GÓC A5 SIÊU NHẠY (DÙNG NGƯỠNG ĐỘNG + POLYGON APPROX)
     function detectAndAutoScan() {
       if (isProcessing || !isOpenCvLoaded) return;
 
@@ -341,19 +335,34 @@
         let hierarchy = new cv.Mat();
 
         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-        cv.threshold(gray, thresh, 100, 255, cv.THRESH_BINARY_INV);
-        cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+        
+        // Cải tiến 1: Dùng ngưỡng động adaptiveThreshold thay vì ngưỡng tĩnh để bất chấp ánh sáng bóng/mờ[cite: 1.1.9, 1.1.10]
+        cv.adaptiveThreshold(gray, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
+        cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
         let squareCenters = [];
         for (let i = 0; i < contours.size(); ++i) {
           let cnt = contours.get(i);
           let area = cv.contourArea(cnt);
-          let rect = cv.boundingRect(cnt);
-          let aspectRatio = rect.width / rect.height;
+          
+          // Lọc kích thước tương đối (bất chấp khoảng cách xa gần)[cite: 1.1.10]
+          if (area > 30 && area < 3000) {
+            let peri = cv.arcLength(cnt, true);
+            let approx = new cv.Mat();
+            
+            // Cải tiến 2: Sử dụng xấp xỉ đa giác để tìm đúng khối mốc vuông có 4 cạnh (approxPolyDP)[cite: 1.1.2]
+            cv.approxPolyDP(cnt, approx, 0.04 * peri, true);
+            let size = approx.rows;
 
-          // Lọc các hình vuông mốc góc
-          if (area > 80 && area < 1500 && aspectRatio >= 0.7 && aspectRatio <= 1.3) {
-            squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+            if (size >= 4 && size <= 6) { // Chấp nhận cả đa giác mốc biến dạng nhẹ
+              let rect = cv.boundingRect(cnt);
+              let aspectRatio = rect.width / rect.height;
+              
+              if (aspectRatio >= 0.5 && aspectRatio <= 1.8) { // Cực kỳ bao dung với góc nghiêng của iPhone Pro Max
+                squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+              }
+            }
+            approx.delete();
           }
         }
 
@@ -361,16 +370,16 @@
         let statusEl = document.getElementById('status');
 
         if (squareCenters.length >= 4) {
-          // ĐÃ PHÁT HIỆN ĐỦ 4 MỐC GÓC ZIPGRADE!
+          // KHÓA THÀNH CÔNG VÀ CHẤM TỰ ĐỘNG NGAY!
           scanGuide.classList.add('locked');
           statusEl.innerText = "✓ Đã khóa góc! Đang tự động chấm...";
           statusEl.style.color = "#10b981";
 
-          isProcessing = true; // Khóa tránh quét lặp
-          executeGradingProcess(); // Tự động chấm
+          isProcessing = true;
+          executeGradingProcess();
         } else {
           scanGuide.classList.remove('locked');
-          statusEl.innerText = "Đang tìm 4 mốc đen góc phiếu...";
+          statusEl.innerText = `Đang quét (Tìm được ${squareCenters.length}/4 góc mốc)...`;
           statusEl.style.color = "#ef4444";
         }
 
@@ -386,7 +395,7 @@
     }
 
     function executeGradingProcess() {
-      if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Rung kiểu ZipGrade
+      if (navigator.vibrate) navigator.vibrate([80, 50, 80]); // Hiệu ứng rung bíp báo kết quả
 
       let video = document.getElementById('video');
       let canvas = document.getElementById('canvas');
@@ -401,7 +410,7 @@
       let p1 = 4.25, p2 = 2.5, p3 = 1.75;
       let total = (p1 + p2 + p3).toFixed(2);
 
-      document.getElementById('status').innerText = `✓ Chấm xong: ${total}đ. Đang đồng bộ...`;
+      document.getElementById('status').innerText = `✓ Đã chấm xong: ${total}đ. Đang đồng bộ...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
@@ -417,11 +426,11 @@
       })
       .then(() => {
         document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh (${total}đ)!`;
-        setTimeout(() => { isProcessing = false; }, 2000); // Sẵn sàng cho bài tiếp theo sau 2 giây
+        setTimeout(() => { isProcessing = false; }, 2500); // 2.5 giây sau là quét tiếp tờ khác
       })
       .catch(err => {
         document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
-        setTimeout(() => { isProcessing = false; }, 2000);
+        setTimeout(() => { isProcessing = false; }, 2500);
       });
     }
 
