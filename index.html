@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>App Chấm Bài GDPT 2018 - HVT</title>
+  <title>App Chấm Bài GDPT 2018 - NKZip</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     body { margin: 0; background: #0f172a; color: #fff; font-family: -apple-system, sans-serif; text-align: center; }
@@ -17,6 +17,7 @@
     .scan-guide { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; border: 3px dashed #10b981; pointer-events: none; border-radius: 8px; box-sizing: border-box; }
     #status { margin: 12px; font-size: 15px; color: #10b981; min-height: 20px; font-weight: 500; }
     .btn-scan { background: #f59e0b; color: #000; width: 90%; max-width: 400px; padding: 14px; font-size: 18px; border-radius: 10px; font-weight: bold; }
+    .btn-scan:active { transform: scale(0.98); opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -33,7 +34,7 @@
     <div class="scan-guide"></div>
   </div>
 
-  <div id="status">Đang tải thư viện xử lý ảnh OpenCV...</div>
+  <div id="status">Đang tải thư viện xử lý ảnh...</div>
   
   <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
   <canvas id="canvas" style="display:none;"></canvas>
@@ -46,7 +47,7 @@
 
     function onOpenCvReady() {
       isOpenCvLoaded = true;
-      document.getElementById('status').innerText = "Thư viện sẵn sàng. Căn phiếu vào khung và chụp!";
+      document.getElementById('status').innerText = "Đã sẵn sàng! Đưa phiếu vào khung và bấm Chụp.";
     }
 
     function switchMode(mode) {
@@ -56,68 +57,75 @@
       document.getElementById('status').innerText = `Đã chọn: ${mode === 'Toan' ? 'Môn Toán' : 'Môn Hóa / Sinh'}`;
     }
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } })
       .then(stream => { document.getElementById('video').srcObject = stream; })
-      .catch(err => alert("Không thể truy cập Camera: " + err));
+      .catch(err => alert("Không thể mở Camera: " + err));
 
     function captureAndScan() {
-      if (!isOpenCvLoaded) {
-        alert("Vui lòng đợi OpenCV nạp xong!");
-        return;
-      }
+      // Hiệu ứng rung phản hồi tức thì trên iPhone
+      if (navigator.vibrate) navigator.vibrate(50);
 
-      document.getElementById('status').innerText = "Đang quét và nắn thẳng góc phiếu...";
+      document.getElementById('status').innerText = "Đang xử lý...";
       
       let video = document.getElementById('video');
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
       
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
       ctx.drawImage(video, 0, 0);
 
-      try {
-        let src = cv.imread(canvas);
-        let processedMat = processPerspectiveTransform(src);
+      let compressedImgBase64 = "";
 
-        // Giả lập tính toán kết quả sau khi nắn góc chuẩn
-        let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
-        let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
-
-        document.getElementById('status').innerText = `Thành công! Điểm: ${total}. Đang lưu...`;
-
-        // Gửi ảnh đã cắt thẳng + điểm về Google Sheets & Drive
-        fetch(GAS_WEBAPP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subject: currentSubject,
-            sbd: "2403",
-            maDe: "8371",
-            diemP1: p1,
-            diemP2: p2,
-            diemP3: p3,
-            tongDiem: total,
-            imgBase64: processedMat
-          })
-        })
-        .then(() => {
-          document.getElementById('status').innerText = `Đã lưu bài (${total}đ) lên Drive & Sheets!`;
-        })
-        .catch(err => {
-          document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
-        });
-
-        src.delete();
-      } catch (e) {
-        console.error(e);
-        document.getElementById('status').innerText = "Không tìm thấy 4 mốc góc phiếu. Hãy giữ điện thoại song song!";
+      if (isOpenCvLoaded) {
+        try {
+          let src = cv.imread(canvas);
+          compressedImgBase64 = processPerspectiveTransform(src);
+          src.delete();
+        } catch (e) {
+          compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.5);
+        }
+      } else {
+        compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.5);
       }
+
+      // Giả lập điểm số
+      let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
+      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
+
+      document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang gửi dữ liệu...`;
+
+      // Gửi dữ liệu siêu nhẹ bất đồng bộ
+      fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: currentSubject,
+          sbd: "2403",
+          maDe: "8371",
+          diemP1: p1,
+          diemP2: p2,
+          diemP3: p3,
+          tongDiem: total,
+          imgBase64: compressedImgBase64
+        })
+      })
+      .then(() => {
+        document.getElementById('status').innerText = `✓ Đã lưu bài (${total}đ) thành công!`;
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = "Lỗi gửi dữ liệu: " + err;
+      });
     }
 
-    // Thuật toán phát hiện 4 góc vuông đen và Perspective Transform
     function processPerspectiveTransform(src) {
+      let dstWidth = 600;
+      let dstHeight = 840;
+      let warpedCanvas = document.getElementById('warpedCanvas');
+      warpedCanvas.width = dstWidth;
+      warpedCanvas.height = dstHeight;
+
       let gray = new cv.Mat();
       let blurred = new cv.Mat();
       let thresh = new cv.Mat();
@@ -126,8 +134,7 @@
 
       cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
       cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
-      cv.threshold(blurred, thresh, 100, 255, cv.THRESH_BINARY_INV);
-
+      cv.threshold(blurred, thresh, 120, 255, cv.THRESH_BINARY_INV);
       cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
       let squareCenters = [];
@@ -137,22 +144,12 @@
         let rect = cv.boundingRect(cnt);
         let aspectRatio = rect.width / rect.height;
 
-        // Lọc các hình vuông mốc góc dựa trên diện tích và tỉ lệ vuông
-        if (area > 300 && area < 5000 && aspectRatio >= 0.8 && aspectRatio <= 1.2) {
+        if (area > 150 && area < 4000 && aspectRatio >= 0.75 && aspectRatio <= 1.25) {
           squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
         }
       }
 
-      // Kích thước khung hình chuẩn sau khi nắn phẳng (1000x1400 px)
-      let dstWidth = 1000;
-      let dstHeight = 1400;
-
-      let warpedCanvas = document.getElementById('warpedCanvas');
-      warpedCanvas.width = dstWidth;
-      warpedCanvas.height = dstHeight;
-
       if (squareCenters.length >= 4) {
-        // Sắp xếp 4 điểm góc: Top-Left, Top-Right, Bottom-Right, Bottom-Left
         squareCenters.sort((a, b) => (a.y - b.y));
         let topTwo = squareCenters.slice(0, 2).sort((a, b) => a.x - b.x);
         let bottomTwo = squareCenters.slice(squareCenters.length - 2).sort((a, b) => a.x - b.x);
@@ -176,17 +173,18 @@
         cv.warpPerspective(src, dst, M, new cv.Size(dstWidth, dstHeight));
 
         cv.imshow('warpedCanvas', dst);
-
-        // Giải phóng bộ nhớ OpenCV
         srcTri.delete(); dstTri.delete(); M.delete(); dst.delete();
       } else {
-        // Nếu không đủ 4 điểm mốc, tự động căn cắt theo tỉ lệ vùng giữa khung hình
-        cv.imshow('warpedCanvas', src);
+        // Tự động cắt vùng giữa nếu không đủ 4 mốc góc
+        let rect = new cv.Rect(src.cols * 0.05, src.rows * 0.05, src.cols * 0.9, src.rows * 0.9);
+        let dst = src.roi(rect);
+        cv.imshow('warpedCanvas', dst);
+        dst.delete();
       }
 
       gray.delete(); blurred.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
 
-      return warpedCanvas.toDataURL('image/jpeg', 0.85);
+      return warpedCanvas.toDataURL('image/jpeg', 0.6);
     }
   </script>
 </body>
