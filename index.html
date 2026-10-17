@@ -1,321 +1,336 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>App Chấm Bài GDPT 2018 - NKZip</title>
-  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #0f172a; color: #fff; font-family: -apple-system, sans-serif; text-align: center; }
-    header { background: #1e293b; padding: 10px; font-weight: bold; font-size: 16px; color: #f59e0b; }
-    
-    /* Thanh điều hướng Tab chính */
-    .main-tabs { display: flex; justify-content: center; background: #1e293b; border-bottom: 1px solid #334155; }
-    .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #94a3b8; font-weight: bold; font-size: 14px; cursor: pointer; }
-    .tab-btn.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; }
-
-    .tab-content { display: none; padding: 10px; }
-    .tab-content.active { display: block; }
-
-    .nav-btn { display: flex; justify-content: center; gap: 8px; margin: 6px 0; }
-    button.sub-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; background: #334155; color: #ccc; }
-    button.sub-btn.active { background: #2563eb; color: #fff; }
-    
-    /* Vùng Camera mở rộng bè ngang chuẩn phiếu A5 thực tế */
-    #cam-container { 
-      position: relative; 
-      width: 98%; 
-      max-width: 440px; 
-      aspect-ratio: 1.15 / 1; 
-      margin: 0 auto; 
-      border-radius: 12px; 
-      overflow: hidden; 
-      border: 2px solid #334155; 
-      background: #000;
-    }
-    video { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .scan-guide { 
-      position: absolute; 
-      top: 5%; bottom: 5%; left: 2%; right: 2%;
-      border: 2.5px dashed #10b981; 
-      pointer-events: none; 
-      border-radius: 6px; 
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
-    }
-    
-    #status { margin: 8px; font-size: 14px; color: #10b981; min-height: 20px; font-weight: 600; }
-    .btn-scan { background: #f59e0b; color: #000; width: 98%; max-width: 440px; padding: 14px; font-size: 17px; border-radius: 10px; font-weight: bold; border: none; }
-    .btn-scan:active { transform: scale(0.98); opacity: 0.9; }
-
-    /* Màn hình cài đặt đáp án */
-    .answer-card { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 12px; text-align: left; }
-    .answer-card h3 { margin-top: 0; color: #f59e0b; font-size: 15px; border-bottom: 1px solid #334155; padding-bottom: 6px; }
-    .grid-ans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .ans-item { font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
-    select, input[type="text"] { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; }
-
-    /* Pop-up hiển thị kết quả chấm */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; }
-    .modal-content { background: #1e293b; width: 90%; max-width: 400px; padding: 16px; border-radius: 12px; text-align: left; max-height: 85vh; overflow-y: auto; }
-    .score-badge { font-size: 28px; font-weight: bold; color: #10b981; text-align: center; margin: 10px 0; }
-    .modal-btn { background: #2563eb; color: #fff; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 10px; }
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.7">
+  <style type="text/css">
+    body {background-color: #0d121f}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Helvetica Neue'; color: #f08d0e; -webkit-text-stroke: #f08d0e; background-color: #171e2d}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Helvetica Neue'; color: #f08d0e; -webkit-text-stroke: #f08d0e; background-color: #171e2d; min-height: 18.0px}
+    span.s1 {font-kerning: none}
   </style>
 </head>
 <body>
-
-  <header>NKZip - Chấm Bài GDPT 2018 (Mẫu 8371)</header>
-
-  <div class="main-tabs">
-    <button class="tab-btn active" onclick="switchMainTab('scanTab')">📷 Quét Bài</button>
-    <button class="tab-btn" onclick="switchMainTab('keyTab')">⚙️ Cài Đặt Đáp Án</button>
-  </div>
-
-  <!-- TAB 1: QUÉT BÀI THI -->
-  <div id="scanTab" class="tab-content active">
-    <div class="nav-btn">
-      <button id="btnToan" class="sub-btn active" onclick="switchMode('Toan')">Môn Toán (Phần I + II + III)</button>
-      <button id="btnHoaSinh" class="sub-btn" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (Phần I + II)</button>
-    </div>
-
-    <div id="cam-container">
-      <video id="video" autoplay playsinline></video>
-      <div class="scan-guide"></div>
-    </div>
-
-    <div id="status">Đang nạp camera...</div>
-    <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
-  </div>
-
-  <!-- TAB 2: QUẢN LÝ ĐÁP ÁN -->
-  <div id="keyTab" class="tab-content">
-    <div style="margin-bottom: 12px; text-align: left;">
-      <label><b>Mã Đề:</b> </label>
-      <input type="text" id="keyMade" value="8371" style="width: 80px; font-weight: bold; text-align: center;">
-      <button class="sub-btn active" onclick="saveAnswerKey()" style="float: right;">💾 Lưu Đáp Án</button>
-    </div>
-
-    <!-- Phần I -->
-    <div class="answer-card">
-      <h3>Phần I: Trắc nghiệm (18 câu)</h3>
-      <div class="grid-ans" id="part1Keys"></div>
-    </div>
-
-    <!-- Phần II -->
-    <div class="answer-card">
-      <h3>Phần II: Đúng / Sai (4 câu)</h3>
-      <div id="part2Keys"></div>
-    </div>
-
-    <!-- Phần III -->
-    <div class="answer-card">
-      <h3>Phần III: Trả lời ngắn (6 câu)</h3>
-      <div class="grid-ans" id="part3Keys"></div>
-    </div>
-  </div>
-
-  <!-- POP-UP HIỂN THỊ KẾT QUẢ PHÂN TÍCH -->
-  <div id="resultModal" class="modal">
-    <div class="modal-content">
-      <h2 style="margin: 0; color: #f59e0b; text-align: center;">KẾT QUẢ CHẤM BÀI</h2>
-      <div class="score-badge" id="modalTotalScore">0.00 đ</div>
-      <div style="font-size: 14px; line-height: 1.6;">
-        <p><b>SBD:</b> <span id="modalSbd">2403</span> | <b>Mã đề:</b> <span id="modalMade">8371</span></p>
-        <p><b>Phần I:</b> <span id="modalP1">0</span> đ | <b>Phần II:</b> <span id="modalP2">0</span> đ | <b>Phần III:</b> <span id="modalP3">0</span> đ</p>
-        <hr style="border-color: #334155;">
-        <p><b>Chi tiết lỗi / Câu sai:</b></p>
-        <div id="modalDetails" style="color: #f87171; font-size: 13px;">Không có câu sai.</div>
-      </div>
-      <button class="modal-btn" onclick="closeModalAndSave()">✓ Lưu & Chấm Bài Tiếp</button>
-    </div>
-  </div>
-
-  <canvas id="canvas" style="display:none;"></canvas>
-  <canvas id="warpedCanvas" style="display:none;"></canvas>
-
-  <script>
-    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
-    let currentSubject = "Toan";
-    let isOpenCvLoaded = false;
-    let currentScannedData = null;
-
-    // Khởi tạo bảng đáp án mặc định
-    function initAnswerKeyUI() {
-      let p1Container = document.getElementById('part1Keys');
-      p1Container.innerHTML = '';
-      for (let i = 1; i <= 18; i++) {
-        p1Container.innerHTML += `<div class="ans-item"><span>Câu ${i}:</span> 
-          <select id="p1_${i}"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>`;
-      }
-
-      let p2Container = document.getElementById('part2Keys');
-      p2Container.innerHTML = '';
-      for (let i = 1; i <= 4; i++) {
-        p2Container.innerHTML += `<div style="margin-bottom:6px;"><b>Câu ${i}:</b> 
-          a:<select id="p2_${i}_a"><option>Đ</option><option>S</option></select>
-          b:<select id="p2_${i}_b"><option>Đ</option><option>S</option></select>
-          c:<select id="p2_${i}_c"><option>Đ</option><option>S</option></select>
-          d:<select id="p2_${i}_d"><option>Đ</option><option>S</option></select></div>`;
-      }
-
-      let p3Container = document.getElementById('part3Keys');
-      p3Container.innerHTML = '';
-      for (let i = 1; i <= 6; i++) {
-        p3Container.innerHTML += `<div class="ans-item"><span>Câu ${i}:</span> 
-          <input type="text" id="p3_${i}" style="width:70px;" placeholder="Ví dụ: -2,5"></div>`;
-      }
-    }
-
-    function saveAnswerKey() {
-      alert("Đã lưu bảng đáp án mã đề " + document.getElementById('keyMade').value + " thành công!");
-    }
-
-    function switchMainTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      if (tabId === 'scanTab') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-      } else {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      }
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    function onOpenCvReady() {
-      isOpenCvLoaded = true;
-      document.getElementById('status').innerText = "Căn 4 góc phiếu vừa ô xanh rồi bấm Chụp.";
-    }
-
-    function switchMode(mode) {
-      currentSubject = mode;
-      document.getElementById('btnToan').classList.toggle('active', mode === 'Toan');
-      document.getElementById('btnHoaSinh').classList.toggle('active', mode === 'HoaSinh');
-      document.getElementById('status').innerText = `Đã chọn: ${mode === 'Toan' ? 'Môn Toán' : 'Môn Hóa / Sinh'}`;
-    }
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } })
-      .then(stream => { 
-        document.getElementById('video').srcObject = stream; 
-        if (!isOpenCvLoaded) document.getElementById('status').innerText = "Căn 4 góc phiếu vừa ô xanh rồi bấm Chụp.";
-      })
-      .catch(err => alert("Không mở được Camera: " + err));
-
-    function captureAndScan() {
-      if (navigator.vibrate) navigator.vibrate(50);
-      document.getElementById('status').innerText = "Đang xử lý...";
-      
-      let video = document.getElementById('video');
-      let canvas = document.getElementById('canvas');
-      let ctx = canvas.getContext('2d');
-      
-      canvas.width = video.videoWidth || 1080;
-      canvas.height = video.videoHeight || 1920;
-      ctx.drawImage(video, 0, 0);
-
-      let compressedImgBase64 = "";
-      if (isOpenCvLoaded) {
-        try {
-          let src = cv.imread(canvas);
-          compressedImgBase64 = processPerspectiveTransform(src);
-          src.delete();
-        } catch (e) {
-          compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);
-        }
-      } else {
-        compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);
-      }
-
-      // Giả lập dữ liệu điểm chấm chi tiết
-      let p1 = 4.50, p2 = 2.50, p3 = (currentSubject === "Toan") ? 1.75 : 0;
-      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
-
-      currentScannedData = {
-        subject: currentSubject,
-        sbd: "2403",
-        maDe: document.getElementById('keyMade').value || "8371",
-        diemP1: p1,
-        diemP2: p2,
-        diemP3: p3,
-        tongDiem: total,
-        imgBase64: compressedImgBase64
-      };
-
-      // Hiển thị Pop-up Kết quả chi tiết
-      document.getElementById('modalTotalScore').innerText = total + " đ";
-      document.getElementById('modalSbd').innerText = currentScannedData.sbd;
-      document.getElementById('modalMade').innerText = currentScannedData.maDe;
-      document.getElementById('modalP1').innerText = p1;
-      document.getElementById('modalP2').innerText = p2;
-      document.getElementById('modalP3').innerText = p3;
-      document.getElementById('modalDetails').innerHTML = "• Câu 5 (Phần I): Chọn B - Đáp án: C<br>• Câu 2c (Phần II): Tô mờ / Bỏ trống";
-      
-      document.getElementById('resultModal').style.display = 'flex';
-    }
-
-    function closeModalAndSave() {
-      document.getElementById('resultModal').style.display = 'none';
-      document.getElementById('status').innerText = "Đang gửi dữ liệu bài làm...";
-
-      fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(currentScannedData)
-      })
-      .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài (${currentScannedData.tongDiem}đ) lên Drive & Sheets!`;
-      })
-      .catch(err => {
-        document.getElementById('status').innerText = "Lỗi lưu dữ liệu: " + err;
-      });
-    }
-
-    function processPerspectiveTransform(src) {
-      let dstWidth = 750, dstHeight = 800;
-      let warpedCanvas = document.getElementById('warpedCanvas');
-      warpedCanvas.width = dstWidth; warpedCanvas.height = dstHeight;
-
-      let gray = new cv.Mat(), blurred = new cv.Mat(), thresh = new cv.Mat(), contours = new cv.MatVector(), hierarchy = new cv.Mat();
-      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-      cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
-      cv.threshold(blurred, thresh, 120, 255, cv.THRESH_BINARY_INV);
-      cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
-
-      let squareCenters = [];
-      for (let i = 0; i < contours.size(); ++i) {
-        let cnt = contours.get(i);
-        let area = cv.contourArea(cnt);
-        let rect = cv.boundingRect(cnt);
-        let aspectRatio = rect.width / rect.height;
-        if (area > 200 && area < 5000 && aspectRatio >= 0.7 && aspectRatio <= 1.3) {
-          squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
-        }
-      }
-
-      if (squareCenters.length >= 4) {
-        squareCenters.sort((a, b) => (a.y - b.y));
-        let topTwo = squareCenters.slice(0, 2).sort((a, b) => a.x - b.x);
-        let bottomTwo = squareCenters.slice(squareCenters.length - 2).sort((a, b) => a.x - b.x);
-
-        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [topTwo[0].x, topTwo[0].y, topTwo[1].x, topTwo[1].y, bottomTwo[1].x, bottomTwo[1].y, bottomTwo[0].x, bottomTwo[0].y]);
-        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, dstWidth, 0, dstWidth, dstHeight, 0, dstHeight]);
-        let M = cv.getPerspectiveTransform(srcTri, dstTri);
-        let dst = new cv.Mat();
-        cv.warpPerspective(src, dst, M, new cv.Size(dstWidth, dstHeight));
-        cv.imshow('warpedCanvas', dst);
-        srcTri.delete(); dstTri.delete(); M.delete(); dst.delete();
-      } else {
-        let rect = new cv.Rect(src.cols * 0.02, src.rows * 0.04, src.cols * 0.96, src.rows * 0.92);
-        let dst = src.roi(rect);
-        cv.imshow('warpedCanvas', dst);
-        dst.delete();
-      }
-      gray.delete(); blurred.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
-      return warpedCanvas.toDataURL('image/jpeg', 0.65);
-    }
-
-    // Tự động khởi tạo giao diện nhập đáp án khi tải trang
-    initAnswerKeyUI();
-  </script>
+<p class="p1"><span class="s1"><b>&lt;!DOCTYPE html&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;html lang="vi"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;head&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;title&gt;NKZip - Hệ Thống Chấm Thi GDPT 2018&lt;/title&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"&gt;&lt;/script&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;style&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Header */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>header { background: #1c2541; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-group { display: flex; align-items: center; gap: 10px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 4px 8px; border-radius: 8px; font-size: 16px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-title { font-size: 18px; font-weight: bold; color: #fff; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.user-name { font-size: 14px; color: #94a3b8; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Layout Sections */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section { display: none; padding: 16px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section.active { display: block; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Cards &amp; Containers */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card { background: #1c2541; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #2a385b; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
+<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Inputs &amp; Selects */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 8px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input, select { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 14px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Buttons */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-main:active { opacity: 0.9; transform: scale(0.99); }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Action List Items (NKZip Style) */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item { background: #1c2541; border: 1px solid #2a385b; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item.highlight { background: #f59e0b; color: #0b132b; border: none; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-icon { font-size: 20px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-text h4 { font-size: 15px; margin-bottom: 2px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-text p { font-size: 12px; opacity: 0.8; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Tables for Student List */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>table { width: 100%; border-collapse: collapse; margin-top: 10px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #2a385b; font-size: 13px; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th { color: #94a3b8; font-weight: 600; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Bottom Navigation Bar */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 60px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; text-decoration: none; font-size: 11px; gap: 3px; cursor: pointer; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item.active { color: #f59e0b; font-weight: bold; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-icon { font-size: 18px; }</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Camera Interface Overlay */</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-header { padding: 12px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-container { position: relative; width: 98%; max-width: 440px; aspect-ratio: 1.15 / 1; margin: 20px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #3a4a75; background: #000; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>video { width: 100%; height: 100%; object-fit: cover; display: block; }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.scan-guide { position: absolute; top: 5%; bottom: 5%; left: 2%; right: 2%; border: 2.5px dashed #10b981; pointer-events: none; border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4); }</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/style&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;/head&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;body&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- Header Banner --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;header&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="logo-group"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="logo-icon"&gt;NK&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="logo-title"&gt;NKZip&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="user-name"&gt;Hồ Viết Thống&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/header&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- PAGE 1: KÌ THI / BÀI THI CHI TIẾT --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-baithi" class="page-section active"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;span&gt;Thông tin bài thi&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;span style="font-size: 12px; color: #38bdf8;"&gt;Phiếu 18 - 4 - 6&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b><span class="Apple-converted-space">      </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;label&gt;Tên bài thi&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;input type="text" id="examName" value="Hoá - Giữa Kỳ I GDPT 2018"&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div style="display: flex; gap: 10px;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div style="flex: 1;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Môn học&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" value="Hóa học"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div style="flex: 1;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Mã đề chính&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" id="mainMade" value="201"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;label&gt;Mẫu phiếu&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;select id="sheetModel"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;option selected&gt;Phiếu 18 - 4 - 6 (chương trình mới GDPT 2018)&lt;/option&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;option&gt;Phiếu Toán 12 - 4 - 6&lt;/option&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/select&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="grid-3"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Số câu P.I&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" value="18" readonly style="text-align: center;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Số câu P.II&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" value="4" readonly style="text-align: center;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Số câu P.III&lt;/label&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" value="6" readonly style="text-align: center;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;p style="font-size: 11px; color: #94a3b8; margin-top: 10px;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>Thang điểm: P.I (0.25đ/câu) • P.II (Đúng 1/2/3/4 ý được 10%/25%/50%/100% điểm câu)</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Action Buttons --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item highlight" onclick="openCameraModal()"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📷&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Chấm bài&lt;/h4&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Mở camera, đưa phiếu vào là tự động quét&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;✏️&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Chỉnh sửa đáp án&lt;/h4&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Cập nhật bảng đáp án và các mã đề thi&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📊&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Bảng điểm &amp; Phân tích&lt;/h4&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Xem lại bài làm và tỉ lệ đúng/sai từng câu&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- PAGE 2: LỚP HỌC --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-lop" class="page-section"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title" style="margin-bottom: 16px;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span&gt;Danh sách Lớp học&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary"&gt;+ Lớp mới&lt;/button&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h3 style="font-size: 16px; font-weight: bold;"&gt;Lớp 12B2&lt;/h3&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p style="font-size: 12px; color: #94a3b8; margin-top: 4px;"&gt;48 học sinh&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span style="color: #38bdf8; font-weight: bold;"&gt;➔&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- PAGE 3: HỌC SINH --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-hocsinh" class="page-section"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span&gt;Danh sách Học sinh (12B2)&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary"&gt;Tải Excel lên&lt;/button&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;input type="text" placeholder="Tìm tên, SBD hoặc lớp..." style="margin-bottom: 12px;"&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="padding: 8px;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;thead&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;STT&lt;/th&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;SBD&lt;/th&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Họ và tên&lt;/th&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Lớp&lt;/th&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/thead&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;tbody&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2201&lt;/td&gt;&lt;td&gt;Lê Công Đức Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;2202&lt;/td&gt;&lt;td&gt;Phạm Ngọc Quế Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;2203&lt;/td&gt;&lt;td&gt;Phạm Thị Vân Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;2204&lt;/td&gt;&lt;td&gt;Trần Huỳnh Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;2205&lt;/td&gt;&lt;td&gt;Hồ Nguyễn Thanh Bảo&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;2206&lt;/td&gt;&lt;td&gt;Trần Gia Bảo B2&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tbody&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/table&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- PAGE 4: KTĐK --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-ktdk" class="page-section"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;Kiểm tra định kỳ&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;p style="font-size: 14px; color: #94a3b8;"&gt;Hệ thống quản lý các kì thi kiểm tra định kỳ khối 12.&lt;/p&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- CAMERA SCANNER FULLSCREEN OVERLAY --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="cam-modal"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div id="cam-header"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span style="font-weight: bold; color: #f59e0b;"&gt;NKZip Scan - Môn Hóa&lt;/span&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary" onclick="closeCameraModal()"&gt;✕ Đóng Camera&lt;/button&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div id="cam-container"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;video id="video" autoplay playsinline&gt;&lt;/video&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="scan-guide"&gt;&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div style="padding: 16px; text-align: center;"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div id="status" style="color: #10b981; font-weight: 600; font-size: 14px; min-height: 24px; margin-bottom: 10px;"&gt;Đang nạp camera...&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-main" onclick="captureAndScan()"&gt;📷 Chụp &amp; Chấm Bài&lt;/button&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- BOTTOM NAVIGATION BAR --&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div class="bottom-nav"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-ktdk', this)"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;✏️&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;KTĐK&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item active" onclick="switchTab('page-baithi', this)"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;📋&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Bài thi&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-lop', this)"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;👥&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Lớp&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-hocsinh', this)"&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;🎓&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Học sinh&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;canvas id="canvas" style="display:none;"&gt;&lt;/canvas&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;canvas id="warpedCanvas" style="display:none;"&gt;&lt;/canvas&gt;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script&gt;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec";<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let isOpenCvLoaded = false;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let videoStream = null;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function switchTab(pageId, navEl) {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.page-section').forEach(p =&gt; p.classList.remove('active'));</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.nav-item').forEach(n =&gt; n.classList.remove('active'));</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById(pageId).classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>navEl.classList.add('active');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function onOpenCvReady() {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>isOpenCvLoaded = true;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Đã sẵn sàng! Căn 4 góc phiếu vào ô xanh.";</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function openCameraModal() {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('cam-modal').style.display = 'flex';</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } })</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>.then(stream =&gt; {<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>videoStream = stream;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>document.getElementById('video').srcObject = stream;<span class="Apple-converted-space"> </span></b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>})</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>.catch(err =&gt; alert("Không mở được Camera: " + err));</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function closeCameraModal() {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('cam-modal').style.display = 'none';</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (videoStream) {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>videoStream.getTracks().forEach(track =&gt; track.stop());</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>}</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function captureAndScan() {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navigator.vibrate) navigator.vibrate(50);</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Đang xử lý OMR...";</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let video = document.getElementById('video');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let canvas = document.getElementById('canvas');</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let ctx = canvas.getContext('2d');</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>canvas.width = video.videoWidth || 1080;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>canvas.height = video.videoHeight || 1920;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>ctx.drawImage(video, 0, 0);</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let p1 = 4.5, p2 = 2.5, p3 = 1.75;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let total = (p1 + p2 + p3).toFixed(2);</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang lưu bài...`;</b></span></p>
+<p class="p2"><span class="s1"><b></b></span><br></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>fetch(GAS_WEBAPP_URL, {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>method: "POST",</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>mode: "no-cors",</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>headers: { "Content-Type": "application/json" },</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>body: JSON.stringify({</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>subject: "Hoahoc",</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>sbd: "2203",</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>maDe: document.getElementById('mainMade').value,</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>imgBase64: compressedImgBase64</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>})</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.then(() =&gt; {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `✓ Đã lưu bài sinh viên SBD 2203 (${total}đ) thành công!`;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.catch(err =&gt; {</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = "Lỗi lưu dữ liệu: " + err;</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>});</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
+<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/script&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;/body&gt;</b></span></p>
+<p class="p1"><span class="s1"><b>&lt;/html&gt;</b></span></p>
 </body>
 </html>
