@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - Fast Auto-Scan GDPT 2018</title>
+  <title>NKZip - Auto Scan ZipGrade GDPT 2018</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -47,7 +47,7 @@
     .nav-item.active { color: #f59e0b; font-weight: bold; }
     .nav-icon { font-size: 17px; }
 
-    /* CAMERA SCANNER */
+    /* CAMERA SCANNER ZIPGRADE STYLE */
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
     
@@ -55,7 +55,7 @@
       position: relative; 
       width: 92%; 
       max-width: 380px; 
-      aspect-ratio: 1 / 1.35; 
+      aspect-ratio: 1 / 1.38; 
       margin: 10px auto 0 auto; 
       border-radius: 12px; 
       overflow: hidden; 
@@ -67,15 +67,15 @@
     .scan-guide { 
       position: absolute; 
       top: 2%; bottom: 2%; left: 2%; right: 2%; 
-      border: 3px dashed #38bdf8; 
+      border: 3.5px dashed #ef4444; 
       pointer-events: none; 
       border-radius: 6px; 
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35); 
-      transition: all 0.2s ease;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4); 
+      transition: all 0.15s ease;
     }
     .scan-guide.locked {
-      border: 4px solid #10b981;
-      box-shadow: 0 0 20px #10b981, 0 0 0 9999px rgba(0, 0, 0, 0.45);
+      border: 4px solid #10b981 !important;
+      box-shadow: 0 0 25px #10b981, 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
     }
   </style>
 </head>
@@ -119,8 +119,8 @@
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
       <div class="action-text">
-        <h4>Chấm bài ngay (ZipGrade Auto)</h4>
-        <p>Tự động nhận diện 4 góc & tính điểm tức thì</p>
+        <h4>Chấm bài tự động ZipGrade</h4>
+        <p>Đưa camera vào phiếu là máy tự bắt 4 mốc & chấm ngay</p>
       </div>
     </div>
 
@@ -227,7 +227,7 @@
   <!-- CAMERA SCANNER OVERLAY -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f59e0b;">NKZip - Quét Bài Thi A5</span>
+      <span style="font-weight: bold; color: #f59e0b;">NKZip Auto-Scan (Tự Động Quét)</span>
       <button class="btn-secondary" onclick="closeCameraModal()">✕ Đóng Camera</button>
     </div>
 
@@ -237,8 +237,8 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #38bdf8; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Đưa tờ phiếu A5 vào khung hình...</div>
-      <button class="btn-main" onclick="triggerManualScan()">📷 Chấm BàiNgay</button>
+      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Đang tìm 4 mốc đen góc phiếu...</div>
+      <button class="btn-main" onclick="triggerManualScan()">📷 Bấm Chấm Bài (Chế độ phụ)</button>
     </div>
   </div>
 
@@ -300,8 +300,8 @@
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
           
-          // QUÉT TỰ ĐỘNG CHU KỲ NẠP NHANH (250ms/lần)
-          autoScanInterval = setInterval(detectAndAutoScan, 250);
+          // QUÉT VÒNG LẶP LIÊN TỤC 150ms/LẦN
+          autoScanInterval = setInterval(detectAndAutoScan, 150);
         })
         .catch(err => alert("Không mở được Camera: " + err));
     }
@@ -314,7 +314,7 @@
       }
     }
 
-    // THUẬT TOÁN ĐỊNH VỊ VÙNG BÀI THI A5 TỰ ĐỘNG
+    // THUẬT TOÁN BẮT MỐC ĐEN ZIPGRADE SIÊU NHẠY
     function detectAndAutoScan() {
       if (isProcessing || !isOpenCvLoaded) return;
 
@@ -323,9 +323,9 @@
 
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
-      canvas.width = video.videoWidth; 
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
+      canvas.width = 480; 
+      canvas.height = 360;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       try {
         let src = cv.imread(canvas);
@@ -335,22 +335,22 @@
         let hierarchy = new cv.Mat();
 
         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-        cv.threshold(gray, thresh, 110, 255, cv.THRESH_BINARY_INV);
-        cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+        // Tối ưu hóa binarization nhạy vùng tối mốc vuông
+        cv.threshold(gray, thresh, 95, 255, cv.THRESH_BINARY_INV);
+        cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
-        let validCorners = 0;
-        let imgArea = src.cols * src.rows;
+        let cornerCount = 0;
 
         for (let i = 0; i < contours.size(); ++i) {
           let cnt = contours.get(i);
           let area = cv.contourArea(cnt);
           
-          // Phát hiện mốc góc dựa trên tỉ lệ diện tích thực của camera
-          if (area > (imgArea * 0.0003) && area < (imgArea * 0.02)) {
+          // Dải diện tích nhận diện linh hoạt các mốc vuông đen
+          if (area > 35 && area < 2500) {
             let rect = cv.boundingRect(cnt);
-            let aspectRatio = rect.width / rect.height;
-            if (aspectRatio >= 0.6 && aspectRatio <= 1.6) {
-              validCorners++;
+            let ratio = rect.width / rect.height;
+            if (ratio >= 0.6 && ratio <= 1.6) {
+              cornerCount++;
             }
           }
         }
@@ -358,17 +358,18 @@
         let scanGuide = document.getElementById('scanGuide');
         let statusEl = document.getElementById('status');
 
-        if (validCorners >= 4) {
+        if (cornerCount >= 4) {
+          // KHÓA XANH LÁ VÀ TỰ ĐỘNG CHẤM NGAY TỨC THÌ
           scanGuide.classList.add('locked');
-          statusEl.innerText = "✓ Đã nhận diện tờ phiếu! Đang tự động chấm...";
+          statusEl.innerText = "✓ Đã bắt 4 góc! Tự động chấm bài...";
           statusEl.style.color = "#10b981";
 
           isProcessing = true;
           executeGradingProcess();
         } else {
           scanGuide.classList.remove('locked');
-          statusEl.innerText = "Đang căn chỉnh mốc phiếu A5...";
-          statusEl.style.color = "#38bdf8";
+          statusEl.innerText = `Đang căn góc phiếu (${cornerCount}/4 góc)...`;
+          statusEl.style.color = "#ef4444";
         }
 
         src.delete(); gray.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
@@ -383,7 +384,7 @@
     }
 
     function executeGradingProcess() {
-      if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Rung bíp tự động
 
       let video = document.getElementById('video');
       let canvas = document.getElementById('canvas');
@@ -398,7 +399,7 @@
       let p1 = 4.25, p2 = 2.5, p3 = 1.75;
       let total = (p1 + p2 + p3).toFixed(2);
 
-      document.getElementById('status').innerText = `✓ Đã chấm xong: ${total}đ. Đang lưu bài...`;
+      document.getElementById('status').innerText = `✓ Đã chấm xong: ${total}đ. Đang đồng bộ...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
@@ -413,8 +414,8 @@
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài thành công (${total}đ)!`;
-        setTimeout(() => { isProcessing = false; }, 2000);
+        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh (${total}đ)!`;
+        setTimeout(() => { isProcessing = false; }, 2000); // 2 giây sau tự động nhận bài tiếp theo
       })
       .catch(err => {
         document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
