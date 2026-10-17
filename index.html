@@ -14,12 +14,12 @@
     .btn-mode { background: #334155; color: #ccc; }
     .btn-mode.active { background: #2563eb; color: #fff; }
     
-    /* Vùng camera chuẩn theo tỉ lệ phiếu thực tế */
+    /* Mở rộng chiều ngang vùng camera */
     #cam-container { 
       position: relative; 
-      width: 94%; 
-      max-width: 400px; 
-      aspect-ratio: 1 / 1.18; /* Tỉ lệ lùn hơn, vừa khít phiếu thực tế */
+      width: 98%; 
+      max-width: 440px; 
+      aspect-ratio: 1.15 / 1; /* Tỉ lệ bè ngang chuẩn theo phiếu */
       margin: 0 auto; 
       border-radius: 12px; 
       overflow: hidden; 
@@ -28,13 +28,13 @@
     }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* Khung xanh ôm sát 4 mốc góc */
+    /* Khung xanh mở rộng tối đa sang 2 bên */
     .scan-guide { 
       position: absolute; 
-      top: 6%; 
-      bottom: 6%;
-      left: 4%; 
-      right: 4%;
+      top: 5%; 
+      bottom: 5%;
+      left: 2%; 
+      right: 2%;
       border: 2.5px dashed #10b981; 
       pointer-events: none; 
       border-radius: 6px; 
@@ -42,7 +42,7 @@
     }
     
     #status { margin: 8px; font-size: 14px; color: #10b981; min-height: 20px; font-weight: 600; }
-    .btn-scan { background: #f59e0b; color: #000; width: 94%; max-width: 400px; padding: 14px; font-size: 17px; border-radius: 10px; font-weight: bold; }
+    .btn-scan { background: #f59e0b; color: #000; width: 98%; max-width: 440px; padding: 14px; font-size: 17px; border-radius: 10px; font-weight: bold; }
     .btn-scan:active { transform: scale(0.98); opacity: 0.9; }
   </style>
 </head>
@@ -151,8 +151,8 @@
     }
 
     function processPerspectiveTransform(src) {
-      let dstWidth = 700;
-      let dstHeight = 820; // Khung nắn góc chuẩn tỷ lệ phiếu lùn thực tế
+      let dstWidth = 750;
+      let dstHeight = 800;
       let warpedCanvas = document.getElementById('warpedCanvas');
       warpedCanvas.width = dstWidth;
       warpedCanvas.height = dstHeight;
@@ -206,7 +206,7 @@
         cv.imshow('warpedCanvas', dst);
         srcTri.delete(); dstTri.delete(); M.delete(); dst.delete();
       } else {
-        let rect = new cv.Rect(src.cols * 0.04, src.rows * 0.04, src.cols * 0.92, src.rows * 0.92);
+        let rect = new cv.Rect(src.cols * 0.02, src.rows * 0.04, src.cols * 0.96, src.rows * 0.92);
         let dst = src.roi(rect);
         cv.imshow('warpedCanvas', dst);
         dst.delete();
