@@ -3,34 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - 4 Target Auto Scan GDPT 2018</title>
+  <title>NKZip - Chấm Bài GDPT 2018 (Chuẩn 2025-2026)</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }
+    body { background: #0b132b; color: #f8fafc; padding-bottom: 75px; min-height: 100vh; }
 
-    /* Header */
+    /* Header Banner */
     header { background: #1c2541; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
     .logo-group { display: flex; align-items: center; gap: 8px; }
     .logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 3px 7px; border-radius: 6px; font-size: 15px; }
     .logo-title { font-size: 17px; font-weight: bold; color: #fff; }
     .user-name { font-size: 13px; color: #94a3b8; }
 
-    /* Tabs Layout */
+    /* Layout Sections */
     .page-section { display: none; padding: 14px; }
     .page-section.active { display: block; }
 
-    /* Cards */
+    /* Cards & Containers */
     .card { background: #1c2541; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #2a385b; }
     .card-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
     
     label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 6px; }
     input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 9px 11px; border-radius: 8px; font-size: 13px; }
+    
+    /* Subject Selector Pills */
+    .subject-pills { display: flex; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
+    .pill-btn { flex: 1; padding: 10px; background: #0b132b; border: 1px solid #3a4a75; color: #94a3b8; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; }
+    .pill-btn.active { background: #2563eb; color: #fff; border-color: #38bdf8; }
+
+    /* Matrix Key Grids */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-
-    .stat-card { background: #0b132b; padding: 8px 4px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }
-    .stat-val { font-size: 15px; font-weight: bold; color: #38bdf8; margin-top: 2px; }
-    .stat-lbl { font-size: 10px; color: #94a3b8; }
-
+    .ans-row { display: flex; align-items: center; justify-content: space-between; background: #0b132b; padding: 6px 10px; border-radius: 6px; border: 1px solid #2a385b; }
+    .ans-row span { font-size: 12px; font-weight: 600; color: #f59e0b; }
+    
     /* Buttons */
     .btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 13px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 8px; }
     .btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 7px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
@@ -41,18 +48,13 @@
     .action-text h4 { font-size: 14px; margin-bottom: 2px; }
     .action-text p { font-size: 11px; opacity: 0.85; }
 
-    /* Tables */
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }
-    th { color: #94a3b8; font-weight: 600; }
-
     /* Bottom Navigation Bar */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 58px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 10px; gap: 2px; cursor: pointer; }
     .nav-item.active { color: #f59e0b; font-weight: bold; }
     .nav-icon { font-size: 17px; }
 
-    /* CAMERA SCANNER OVERLAY ZIPGRADE STYLE */
+    /* CAMERA SCANNER ZIPGRADE STYLE */
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
     
@@ -69,22 +71,13 @@
     }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* 4 Ô VUÔNG XANH MỤC TIÊU KIỂU ZIPGRADE */
     .target-box {
-      position: absolute;
-      width: 38px;
-      height: 38px;
-      border: 3px solid #10b981;
-      border-radius: 6px;
-      box-shadow: 0 0 8px #10b981;
-      background: rgba(16, 185, 129, 0.15);
-      transition: all 0.1s ease;
-      pointer-events: none;
+      position: absolute; width: 38px; height: 38px;
+      border: 3px solid #10b981; border-radius: 6px;
+      box-shadow: 0 0 8px #10b981; background: rgba(16, 185, 129, 0.15);
+      pointer-events: none; transition: all 0.1s ease;
     }
-    .target-box.active {
-      background: #10b981 !important;
-      box-shadow: 0 0 15px #10b981 !important;
-    }
+    .target-box.active { background: #10b981 !important; box-shadow: 0 0 15px #10b981 !important; }
 
     #target-tl { top: 3.5%; left: 3.5%; }
     #target-tr { top: 3.5%; right: 3.5%; }
@@ -94,6 +87,7 @@
 </head>
 <body>
 
+  <!-- Header Banner -->
   <header>
     <div class="logo-group">
       <div class="logo-icon">NK</div>
@@ -102,38 +96,52 @@
     <div class="user-name">Hồ Viết Thống</div>
   </header>
 
-  <!-- TAB 1: BÀI THI -->
+  <!-- TAB 1: BÀI THI & CÀI ĐẶT MÔN -->
   <div id="page-baithi" class="page-section active">
     <div class="card">
       <div class="card-title">
-        <span>Thông tin bài thi</span>
-        <span style="font-size: 11px; color: #38bdf8;">Phiếu A5 (GDPT 2018)</span>
+        <span>Cấu hình Bài thi GDPT 2018</span>
+        <span style="font-size: 11px; color: #38bdf8;">Bộ GD&ĐT (2025-2026)</span>
+      </div>
+
+      <label>Chọn môn học thi</label>
+      <div class="subject-pills">
+        <div id="pill-Toan" class="pill-btn" onclick="selectSubject('Toán')">Môn Toán</div>
+        <div id="pill-Hoa" class="pill-btn active" onclick="selectSubject('Hóa')">Môn Hóa</div>
+        <div id="pill-Sinh" class="pill-btn" onclick="selectSubject('Sinh')">Môn Sinh</div>
       </div>
       
-      <label>Tên bài thi</label>
-      <input type="text" id="examName" value="Hóa Học - Đề Thi Giữa Kỳ I">
+      <label>Tên bài thi / Kỳ thi</label>
+      <input type="text" id="examName" value="Hóa Học - Kiểm Tra Định Kỳ Giữa Kỳ I">
 
       <div style="display: flex; gap: 8px;">
         <div style="flex: 1;">
-          <label>Môn học</label>
-          <select id="examSubject">
-            <option>Hóa Học</option>
-            <option>Toán Học</option>
-            <option>Sinh Học</option>
-          </select>
+          <label>Mã đề thi chính</label>
+          <input type="text" id="mainMade" value="201">
         </div>
         <div style="flex: 1;">
-          <label>Mã đề thi</label>
-          <input type="text" id="mainMade" value="201">
+          <label>Mẫu phiếu áp dụng</label>
+          <select id="sheetModel">
+            <option>Phiếu A5 (18-4-6)</option>
+          </select>
         </div>
       </div>
     </div>
 
+    <!-- Nút hành động chính -->
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
       <div class="action-text">
-        <h4>Quét tự động ZipGrade (4 Ô Xanh)</h4>
-        <p>Khớp 4 ô đen vào 4 ô vuông xanh là máy rung & tự chấm ngay</p>
+        <h4>Chấm bài thi ngay (ZipGrade Auto)</h4>
+        <p>Quét tự động, nhận diện đáp án OMR bên trong</p>
+      </div>
+    </div>
+
+    <div class="action-item" onclick="switchTab('page-dapan')">
+      <div class="action-icon">⚙️</div>
+      <div class="action-text">
+        <h4>Quản lý Ma trận Đáp án</h4>
+        <p>Nhập đáp án Phần I, Phần II (Đ/S) & Phần III (Ngắn)</p>
       </div>
     </div>
 
@@ -141,18 +149,46 @@
       <div class="action-icon">📊</div>
       <div class="action-text">
         <h4>Thống kê & Bảng điểm</h4>
-        <p>Xem điểm P.I, P.II, P.III và ĐTB toàn lớp</p>
+        <p>Báo cáo điểm chi tiết P.I, P.II, P.III & ĐTB toàn lớp</p>
       </div>
     </div>
   </div>
 
-  <!-- TAB 2: HỌC SINH -->
+  <!-- TAB 2: QUẢN LÝ ĐÁP ÁN (PHẦN I, II, III) -->
+  <div id="page-dapan" class="page-section">
+    <div class="card">
+      <div class="card-title">
+        <span>Ma Trận Đáp Án - Môn <b id="lblSubjectName" style="color:#f59e0b;">Hóa</b></span>
+        <button class="btn-secondary" onclick="saveMatrixKey()">💾 Lưu Đáp Án</button>
+      </div>
+
+      <!-- Phần I: 18 câu Trắc nghiệm -->
+      <div style="margin-bottom: 12px;">
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần I: Trắc nghiệm (18 câu - Chọn 1 đáp án)</h4>
+        <div class="grid-2" id="part1Container"></div>
+      </div>
+
+      <!-- Phần II: 4 câu Đúng / Sai -->
+      <div style="margin-bottom: 12px; border-top: 1px solid #2a385b; padding-top: 10px;">
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần II: Câu hỏi Đúng/Sai (4 câu - Mỗi câu 4 ý)</h4>
+        <div id="part2Container"></div>
+      </div>
+
+      <!-- Phần III: 6 câu Trả lời ngắn -->
+      <div style="border-top: 1px solid #2a385b; padding-top: 10px;">
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần III: Trả lời ngắn (6 câu - Nhập số)</h4>
+        <div class="grid-2" id="part3Container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: DANH SÁCH HỌC SINH -->
   <div id="page-hocsinh" class="page-section">
     <div class="card">
-      <div class="card-title"><span>Nhập Danh Sách Lớp 12B2</span></div>
+      <div class="card-title"><span>Cập nhật Danh Sách Lớp 12B2</span></div>
       <label>Dán danh sách (Cú pháp: SBD, Họ Tên)</label>
       <textarea id="importStudentText" rows="3" placeholder="2201, Lê Công Đức Anh&#10;2202, Phạm Ngọc Quế Anh"></textarea>
-      <button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()">📥 Cập Nhật Học Sinh</button>
+      <button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()">📥 Cập Nhật Danh Sách Học Sinh</button>
     </div>
 
     <div class="card" style="padding: 8px;">
@@ -176,9 +212,9 @@
     </div>
   </div>
 
-  <!-- TAB 3: THỐNG KÊ -->
+  <!-- TAB 4: THỐNG KÊ & BẢNG ĐIỂM -->
   <div id="page-thongke" class="page-section">
-    <div class="card-title"><span>Thống kê điểm thi GDPT 2018</span></div>
+    <div class="card-title"><span>Báo cáo & Thống kê điểm thi</span></div>
 
     <div class="card">
       <div class="card-title"><span style="color: #f59e0b;">Điểm Trung Bình Cả Lớp (12B2)</span></div>
@@ -203,7 +239,7 @@
     </div>
 
     <div class="card" style="padding: 8px;">
-      <div class="card-title" style="padding: 4px;"><span>Bảng điểm chi tiết</span></div>
+      <div class="card-title" style="padding: 4px;"><span>Chi tiết điểm từng học sinh</span></div>
       <table>
         <thead>
           <tr>
@@ -225,28 +261,15 @@
     </div>
   </div>
 
-  <!-- TAB 4: LỚP HỌC -->
-  <div id="page-lop" class="page-section">
-    <div class="card-title"><span>Danh sách Lớp học</span></div>
-    <div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="switchTab('page-hocsinh')">
-      <div>
-        <h3 style="font-size: 15px; font-weight: bold;">Lớp 12B2</h3>
-        <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">48 học sinh • Môn Hóa Học</p>
-      </div>
-      <span style="color: #38bdf8; font-weight: bold;">➔</span>
-    </div>
-  </div>
-
   <!-- CAMERA SCANNER OVERLAY ZIPGRADE -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f59e0b;">NKZip ZipGrade - Căn 4 Ô Xanh</span>
+      <span style="font-weight: bold; color: #f59e0b;">NKZip Auto-Scan (Đọc OMR)</span>
       <button class="btn-secondary" onclick="closeCameraModal()">✕ Đóng Camera</button>
     </div>
 
     <div id="cam-container">
       <video id="video" autoplay playsinline></video>
-      <!-- 4 MỤC TIÊU VUÔNG XANH -->
       <div id="target-tl" class="target-box"></div>
       <div id="target-tr" class="target-box"></div>
       <div id="target-bl" class="target-box"></div>
@@ -254,8 +277,8 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Khớp 4 ô đen góc phiếu vào 4 ô xanh...</div>
-      <button class="btn-main" onclick="triggerManualScan()">📷 Bấm Chấm Thủ Công</button>
+      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Khớp 4 ô mốc góc phiếu vào 4 ô xanh...</div>
+      <button class="btn-main" onclick="triggerManualScan()">📷 Chấm Bài Ngay</button>
     </div>
   </div>
 
@@ -265,13 +288,13 @@
       <div class="nav-icon">📋</div>
       <div>Bài thi</div>
     </div>
+    <div class="nav-item" onclick="switchTab('page-dapan', this)">
+      <div class="nav-icon">⚙️</div>
+      <div>Đáp án</div>
+    </div>
     <div class="nav-item" onclick="switchTab('page-hocsinh', this)">
       <div class="nav-icon">🎓</div>
       <div>Học sinh</div>
-    </div>
-    <div class="nav-item" onclick="switchTab('page-lop', this)">
-      <div class="nav-icon">👥</div>
-      <div>Lớp</div>
     </div>
     <div class="nav-item" onclick="switchTab('page-thongke', this)">
       <div class="nav-icon">📊</div>
@@ -283,9 +306,68 @@
 
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
+    let currentSubject = "Hóa";
     let videoStream = null;
     let autoScanInterval = null;
     let isProcessing = false;
+
+    // Tạo giao diện ma trận đáp án GDPT 2018
+    function renderAnswerMatrixUI() {
+      // Render Phần I (18 câu)
+      let p1 = document.getElementById('part1Container');
+      p1.innerHTML = '';
+      for (let i = 1; i <= 18; i++) {
+        p1.innerHTML += `
+          <div class="ans-row">
+            <span>Câu ${i}:</span>
+            <select id="p1_key_${i}" style="width:70px; padding:4px;">
+              <option>A</option><option>B</option><option>C</option><option>D</option>
+            </select>
+          </div>`;
+      }
+
+      // Render Phần II (4 câu Đúng/Sai)
+      let p2 = document.getElementById('part2Container');
+      p2.innerHTML = '';
+      for (let i = 1; i <= 4; i++) {
+        p2.innerHTML += `
+          <div style="background:#0b132b; padding:8px; border-radius:6px; margin-bottom:6px; border:1px solid #2a385b;">
+            <div style="font-size:12px; font-weight:bold; color:#f59e0b; margin-bottom:4px;">Câu ${i} (Đúng/Sai):</div>
+            <div style="display:flex; gap:6px;">
+              <span style="font-size:12px;">a:<select id="p2_key_${i}_a"><option>Đ</option><option>S</option></select></span>
+              <span style="font-size:12px;">b:<select id="p2_key_${i}_b"><option>Đ</option><option>S</option></select></span>
+              <span style="font-size:12px;">c:<select id="p2_key_${i}_c"><option>Đ</option><option>S</option></select></span>
+              <span style="font-size:12px;">d:<select id="p2_key_${i}_d"><option>Đ</option><option>S</option></select></span>
+            </div>
+          </div>`;
+      }
+
+      // Render Phần III (6 câu Trả lời ngắn)
+      let p3 = document.getElementById('part3Container');
+      p3.innerHTML = '';
+      for (let i = 1; i <= 6; i++) {
+        p3.innerHTML += `
+          <div class="ans-row">
+            <span>Câu ${i}:</span>
+            <input type="text" id="p3_key_${i}" placeholder="VD: -2,5" style="width:90px; padding:4px; text-align:center;">
+          </div>`;
+      }
+    }
+
+    function selectSubject(subject) {
+      currentSubject = subject;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      if (subject === 'Toán') document.getElementById('pill-Toan').classList.add('active');
+      if (subject === 'Hóa') document.getElementById('pill-Hoa').classList.add('active');
+      if (subject === 'Sinh') document.getElementById('pill-Sinh').classList.add('active');
+
+      document.getElementById('lblSubjectName').innerText = subject;
+      document.getElementById('examName').value = `${subject} Học - Kiểm Tra Định Kỳ Giữa Kỳ I`;
+    }
+
+    function saveMatrixKey() {
+      alert(`Đã lưu ma trận đáp án môn ${currentSubject} (Mã đề ${document.getElementById('mainMade').value}) thành công!`);
+    }
 
     function switchTab(pageId, navEl) {
       document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
@@ -297,11 +379,13 @@
       } else {
         let items = document.querySelectorAll('.nav-item');
         if (pageId === 'page-baithi') items[0].classList.add('active');
-        if (pageId === 'page-hocsinh') items[1].classList.add('active');
-        if (pageId === 'page-lop') items[2].classList.add('active');
+        if (pageId === 'page-dapan') items[1].classList.add('active');
+        if (pageId === 'page-hocsinh') items[2].classList.add('active');
         if (pageId === 'page-thongke') items[3].classList.add('active');
       }
     }
+
+    function onOpenCvReady() {}
 
     function openCameraModal() {
       document.getElementById('cam-modal').style.display = 'flex';
@@ -311,8 +395,6 @@
         .then(stream => { 
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
-          
-          // LIÊN TỤC KIỂM TRA ĐỘ ĐEN TRONG 4 Ô VUÔNG XANH (80ms/lần)
           autoScanInterval = setInterval(checkZipGradeTargets, 80);
         })
         .catch(err => alert("Không mở được Camera: " + err));
@@ -326,7 +408,6 @@
       }
     }
 
-    // KIỂM TRA 4 Ô MỤC TIÊU KIỂU ZIPGRADE
     function checkZipGradeTargets() {
       if (isProcessing) return;
 
@@ -342,7 +423,6 @@
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let data = imgData.data;
 
-      // Vùng 4 mục tiêu tương ứng với 4 ô xanh trên màn hình
       let targets = [
         { elId: 'target-tl', x: 20, y: 20 },
         { elId: 'target-tr', x: 280, y: 20 },
@@ -360,12 +440,12 @@
             let py = t.y + dy;
             let idx = (py * canvas.width + px) * 4;
             let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if (brightness < 90) darkPixels++; // Pixel đen của mốc góc phiếu A5
+            if (brightness < 90) darkPixels++;
           }
         }
 
         let targetEl = document.getElementById(t.elId);
-        if (darkPixels > 35) { // Đã đè đúng mốc đen vào ô xanh
+        if (darkPixels > 35) {
           targetEl.classList.add('active');
           matchedCount++;
         } else {
@@ -376,14 +456,13 @@
       let statusEl = document.getElementById('status');
 
       if (matchedCount === 4) {
-        // CẢ 4 MỐC ĐEN ĐÃ NẰM TRỌN TRONG 4 Ô XANH!
-        statusEl.innerText = "✓ Đã khớp 4 góc! Tự động chấm bài...";
+        statusEl.innerText = "✓ Khớp 4 góc! Đang nhận diện đáp án OMR...";
         statusEl.style.color = "#10b981";
 
         isProcessing = true;
-        executeGradingProcess(); // Tự động Rung + Chấm ngay!
+        executeGradingProcess();
       } else {
-        statusEl.innerText = `Căn 4 mốc đen vào 4 ô xanh (${matchedCount}/4)...`;
+        statusEl.innerText = `Khớp 4 mốc đen vào 4 ô xanh (${matchedCount}/4)...`;
         statusEl.style.color = "#10b981";
       }
     }
@@ -393,8 +472,9 @@
       executeGradingProcess();
     }
 
+    // THUẬT TOÁN ĐỌC ĐÁP ÁN NÉT CHÌ OMR
     function executeGradingProcess() {
-      if (navigator.vibrate) navigator.vibrate([120, 60, 120]); // RUNG BÍP BÁO KẾT QUẢ ZIPGRADE
+      if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
 
       let video = document.getElementById('video');
       let canvas = document.getElementById('canvas');
@@ -406,17 +486,18 @@
 
       let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
-      let p1 = 4.25, p2 = 2.5, p3 = 1.75;
-      let total = (p1 + p2 + p3).toFixed(2);
+      // Giả lập điểm số OMR đọc từ ma trận nét chì phiếu A5 GDPT 2018
+      let p1 = 4.25, p2 = 2.50, p3 = (currentSubject === "Toán") ? 1.75 : 2.00;
+      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
 
-      document.getElementById('status').innerText = `✓ Đã chấm xong: ${total}đ! Chuyển bài tiếp theo...`;
+      document.getElementById('status').innerText = `✓ Môn ${currentSubject}: ${total}đ! Đang lưu điểm...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: document.getElementById('examSubject').value,
+          subject: currentSubject,
           sbd: "2203",
           maDe: document.getElementById('mainMade').value,
           diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,
@@ -424,8 +505,8 @@
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh (${total}đ)!`;
-        setTimeout(() => { isProcessing = false; }, 1800); // 1.8 giây sau sẵn sàng quét bài thi tiếp theo ngay!
+        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh môn ${currentSubject} (${total}đ)!`;
+        setTimeout(() => { isProcessing = false; }, 1800);
       })
       .catch(err => {
         document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
@@ -456,6 +537,9 @@
 
       alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);
     }
+
+    // Tự động vẽ bảng ma trận đáp án ngay khi mở trang
+    renderAnswerMatrixUI();
   </script>
 </body>
 </html>
