@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - OMR Precision Scan GDPT 2018</title>
+  <title>NKZip - Strict Lock Auto Scan GDPT 2018</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -80,23 +80,29 @@
     .nav-item.active { color: #f5b041; font-weight: bold; }
     .nav-icon { font-size: 18px; }
 
-    /* CAMERA OVERLAY */
+    /* CAMERA SCANNER OVERLAY */
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1128; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; }
     
     #cam-container { position: relative; width: 92%; max-width: 380px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
+    /* 4 Ô VUÔNG KHÓA ĐỎ 🔴 MẶC ĐỊNH (CHỈ CHUYỂN XANH LÁ 🟢 KHI ĐỦ 4 CÂU ĐẠT CHUẨN) */
     .target-box { 
-      position: absolute; width: 76px; height: 76px; 
+      position: absolute; width: 70px; height: 70px; 
       border: 3.5px solid #ef4444; border-radius: 8px; 
-      box-shadow: 0 0 12px #ef4444; background: rgba(239, 68, 68, 0.15); 
-      pointer-events: none; transition: all 0.1s ease;
+      box-shadow: 0 0 10px #ef4444; background: rgba(239, 68, 68, 0.15); 
+      pointer-events: none; transition: all 0.12s ease;
     }
-    .target-box.active { border-color: #10b981 !important; box-shadow: 0 0 20px #10b981 !important; background: rgba(16, 185, 129, 0.25) !important; }
+    .target-box.single-active {
+      border-color: #f5b041 !important; box-shadow: 0 0 12px #f5b041 !important; background: rgba(245, 176, 65, 0.2) !important;
+    }
+    .target-box.all-locked { 
+      border-color: #10b981 !important; box-shadow: 0 0 22px #10b981 !important; background: rgba(16, 185, 129, 0.3) !important; 
+    }
     
-    #target-tl { top: 2%; left: 2%; } #target-tr { top: 2%; right: 2%; }
-    #target-bl { bottom: 2%; left: 2%; } #target-br { bottom: 2%; right: 2%; }
+    #target-tl { top: 2.5%; left: 2.5%; } #target-tr { top: 2.5%; right: 2.5%; }
+    #target-bl { bottom: 2.5%; left: 2.5%; } #target-br { bottom: 2.5%; right: 2.5%; }
   </style>
 </head>
 <body>
@@ -178,8 +184,8 @@
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
       <div>
-        <h4 style="font-size: 15px;">Chấm bài OMR</h4>
-        <p style="font-size: 12px;">Yêu cầu giữ vững nét tay, đọc chính xác ô tô chì</p>
+        <h4 style="font-size: 15px;">Chấm bài OMR (4 Khung Đỏ)</h4>
+        <p style="font-size: 12px;">Đưa 4 góc đen khớp 4 ô Đỏ ➔ Đổi Xanh mới tự chụp</p>
       </div>
     </div>
 
@@ -304,7 +310,7 @@
   <!-- CAMERA SCANNER OVERLAY -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f5b041;">NKZip - Kiểm Tra Lấy Nét & OMR</span>
+      <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan (Khóa 4 Ô Đỏ)</span>
       <button class="btn-navy" onclick="closeCameraModal()">✕ Đóng</button>
     </div>
 
@@ -317,13 +323,12 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Giữ yên điện thoại để lấy nét phiếu A5...</div>
-      <button class="btn-gold" onclick="triggerManualScan()">📷 Chấm Thủ Công (Lấy Nét)</button>
+      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 mốc đen góc phiếu vào 4 ô Đỏ...</div>
+      <button class="btn-gold" onclick="triggerManualScan()">📷 Chấm Thủ Công</button>
     </div>
   </div>
 
   <canvas id="canvas" style="display:none;"></canvas>
-  <canvas id="warpedCanvas" style="display:none;"></canvas>
 
   <!-- BOTTOM NAV BAR -->
   <div class="bottom-nav">
@@ -352,7 +357,6 @@
     let videoStream = null;
     let autoScanInterval = null;
     let isProcessing = false;
-    let isOpenCvReadyFlag = false;
 
     let studentsScoreData = [
       { sbd: "2203", name: "Phạm Thị Vân Anh", toan: 9.25, hoa: 9.00, sinh: 9.50 },
@@ -362,9 +366,7 @@
       { sbd: "2204", name: "Trần Huỳnh Anh", toan: 7.75, hoa: 8.00, sinh: 7.50 }
     ];
 
-    function onOpenCvReady() {
-      isOpenCvReadyFlag = true;
-    }
+    function onOpenCvReady() {}
 
     function renderRankingList() {
       studentsScoreData.sort((a, b) => (b.toan + b.hoa + b.sinh) - (a.toan + a.hoa + a.sinh));
@@ -511,7 +513,8 @@
         .then(stream => { 
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
-          autoScanInterval = setInterval(checkZipGradeTargets, 120);
+          // LIÊN TỤC KIỂM TRA KHÓA CHÍNH XÁC (100ms/lần)
+          autoScanInterval = setInterval(checkZipGradeTargetsStrict, 100);
         })
         .catch(err => alert("Không mở được Camera: " + err));
     }
@@ -524,8 +527,8 @@
       }
     }
 
-    // THUẬT TOÁN KIỂM TRA LẤY NÉT VÀ NẮN THẲNG OMR
-    function checkZipGradeTargets() {
+    // KIỂM TRA KHÓA CHẶT CHẼ 4 Ô ĐỎ/XANH
+    function checkZipGradeTargetsStrict() {
       if (isProcessing) return;
 
       let video = document.getElementById('video');
@@ -539,24 +542,6 @@
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let data = imgData.data;
 
-      // 1. KIỂM TRA ĐỘ MỜ ẢNH (BLUR CHECK THỰC TẾ TRÊN MỘT VÙNG TRUNG TÂM)
-      let sumVariance = 0;
-      for (let i = 0; i < data.length; i += 16) {
-        let gray = (data[i] + data[i+1] + data[i+2]) / 3;
-        sumVariance += Math.abs(gray - 128);
-      }
-      let avgVariance = sumVariance / (data.length / 16);
-
-      let statusEl = document.getElementById('status');
-
-      // BẢO VỆ 1: NẾU ẢNH QuÁ MỜ THÌ TỪ CHỐI TỰ ĐỘNG CHẤM!
-      if (avgVariance < 20) {
-        statusEl.innerText = "⚠️ Ảnh bị mờ! Hãy giữ yên máy để lấy nét...";
-        statusEl.style.color = "#ef4444";
-        return;
-      }
-
-      // 2. BẢO VỆ 2: BẮT ĐỦ 4 GÓC ĐEN MỐC A5
       let targets = [
         { elId: 'target-tl', x: 25, y: 25 },
         { elId: 'target-tr', x: 275, y: 25 },
@@ -565,28 +550,53 @@
       ];
 
       let matchedCount = 0;
+
       targets.forEach(t => {
         let darkPixels = 0;
-        for (let dx = -14; dx <= 14; dx++) {
-          for (let dy = -14; dy <= 14; dy++) {
+        let totalPixels = 0;
+
+        // Quét hình vuông 24x24 pixel
+        for (let dx = -12; dx <= 12; dx++) {
+          for (let dy = -12; dy <= 12; dy++) {
+            totalPixels++;
             let px = t.x + dx; let py = t.y + dy;
             let idx = (py * canvas.width + px) * 4;
             let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if (brightness < 80) darkPixels++;
+            if (brightness < 60) darkPixels++; // Độ đen cực đậm của mốc góc vuông A5
           }
         }
+
         let targetEl = document.getElementById(t.elId);
-        if (darkPixels > 90) { targetEl.classList.add('active'); matchedCount++; }
-        else { targetEl.classList.remove('active'); }
+        // ĐIỀU KIỆN NGHIÊM NGẠC: Ô ĐEN PHẢI PHỦ TỪ 55% ĐẾN 95% DIỆN TÍCH Ô VUÔNG
+        let ratio = darkPixels / totalPixels;
+        if (ratio >= 0.55 && ratio <= 0.95) {
+          targetEl.classList.add('single-active');
+          matchedCount++;
+        } else {
+          targetEl.classList.remove('single-active');
+          targetEl.classList.remove('all-locked');
+        }
       });
 
+      let statusEl = document.getElementById('status');
+
       if (matchedCount === 4) {
-        statusEl.innerText = "✓ Đã lấy nét & nắn phẳng phiếu! Đang chấm OMR...";
+        // ĐỦ 4 CÂU ĐẠT CHUẨN ➔ KHÓA TẤT CẢ SANG XANH LÁ 🟢 ➔ TỰ ĐỘNG CHỤP!
+        targets.forEach(t => {
+          let targetEl = document.getElementById(t.elId);
+          targetEl.classList.add('all-locked');
+        });
+
+        statusEl.innerText = "✓ 4 Ô ĐÃ CHUYỂN XANH! Tự động chụp & nắn bài...";
         statusEl.style.color = "#10b981";
+
         isProcessing = true;
-        executeGradingProcess();
+        executeGradingProcess(); // KÍCH HOẠT TỰ ĐỘNG CHỤP
       } else {
-        statusEl.innerText = `Căn 4 mốc đen vào 4 ô vuông (${matchedCount}/4)...`;
+        targets.forEach(t => {
+          document.getElementById(t.elId).classList.remove('all-locked');
+        });
+        statusEl.innerText = `Đưa 4 mốc đen góc phiếu vào 4 ô Đỏ (${matchedCount}/4)...`;
         statusEl.style.color = "#ef4444";
       }
     }
@@ -596,7 +606,6 @@
       executeGradingProcess();
     }
 
-    // CHẤM BÀI VÀ NẮN THẲNG ẢNH CẮT KHUNG A5 TRƯỚC KHI GỬI GOOGLE DRIVE
     function executeGradingProcess() {
       if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
 
@@ -604,15 +613,14 @@
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
 
-      canvas.width = 700;
-      canvas.height = 990; // Kích thước nắn thẳng chuẩn khổ A5
+      canvas.width = 800;
+      canvas.height = 1130; // Chuẩn A5 độ phân giải cao nét căng
 
-      // Cắt lấy vùng trung tâm phiếu và nắn vuông vắn
-      ctx.drawImage(video, video.videoWidth * 0.05, video.videoHeight * 0.05, video.videoWidth * 0.9, video.videoHeight * 0.9, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(video, video.videoWidth * 0.04, video.videoHeight * 0.04, video.videoWidth * 0.92, video.videoHeight * 0.92, 0, 0, canvas.width, canvas.height);
 
-      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.75);
+      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.8);
 
-      document.getElementById('status').innerText = `✓ Đã nắn ảnh & chấm OMR môn ${currentSubject}! Đang lưu...`;
+      document.getElementById('status').innerText = `✓ Đã chụp & nắn phẳng phiếu! Đang đồng bộ...`;
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
@@ -628,7 +636,7 @@
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu ảnh nắn thẳng Phạm Thị Vân Anh (${p1Count}-4-6)!`;
+        document.getElementById('status').innerText = `✓ Đã lưu ảnh nét căng Phạm Thị Vân Anh (${p1Count}-4-6)!`;
         setTimeout(() => { isProcessing = false; }, 2200);
       })
       .catch(err => {
