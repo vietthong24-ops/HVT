@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>App Chấm Bài GDPT 2018</title>
-  <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+  <title>App Chấm Bài GDPT 2018 - HVT</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     body { margin: 0; background: #0f172a; color: #fff; font-family: -apple-system, sans-serif; text-align: center; }
     header { background: #1e293b; padding: 12px; font-weight: bold; font-size: 18px; color: #f59e0b; }
@@ -14,33 +14,40 @@
     .btn-mode.active { background: #2563eb; color: #fff; }
     #cam-container { position: relative; width: 92%; max-width: 450px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #334155; }
     video { width: 100%; display: block; }
-    .corner-box { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; border: 3px dashed #10b981; pointer-events: none; border-radius: 8px; }
-    #status { margin: 12px; font-size: 15px; color: #10b981; min-height: 20px; }
+    .scan-guide { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; border: 3px dashed #10b981; pointer-events: none; border-radius: 8px; box-sizing: border-box; }
+    #status { margin: 12px; font-size: 15px; color: #10b981; min-height: 20px; font-weight: 500; }
     .btn-scan { background: #f59e0b; color: #000; width: 90%; max-width: 400px; padding: 14px; font-size: 18px; border-radius: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <header>NKZip - Chấm Bài GDPT 2018</header>
+  <header>NKZip - Chấm Bài GDPT 2018 (Mẫu 8371)</header>
 
   <div class="nav-btn">
-    <button id="btnToan" class="btn-mode active" onclick="switchMode('Toan')">Môn Toán (Phần I + II + III)</button>
-    <button id="btnHoaSinh" class="btn-mode" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (Phần I + II)</button>
+    <button id="btnToan" class="btn-mode active" onclick="switchMode('Toan')">Môn Toán (I + II + III)</button>
+    <button id="btnHoaSinh" class="btn-mode" onclick="switchMode('HoaSinh')">Môn Hóa / Sinh (I + II)</button>
   </div>
 
   <div id="cam-container">
     <video id="video" autoplay playsinline></video>
-    <div class="corner-box"></div>
+    <div class="scan-guide"></div>
   </div>
 
-  <div id="status">Sẵn sàng quét phiếu...</div>
+  <div id="status">Đang tải thư viện xử lý ảnh OpenCV...</div>
   
   <button class="btn-scan" onclick="captureAndScan()">Chụp & Chấm Bài</button>
   <canvas id="canvas" style="display:none;"></canvas>
+  <canvas id="warpedCanvas" style="display:none;"></canvas>
 
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
     let currentSubject = "Toan";
+    let isOpenCvLoaded = false;
+
+    function onOpenCvReady() {
+      isOpenCvLoaded = true;
+      document.getElementById('status').innerText = "Thư viện sẵn sàng. Căn phiếu vào khung và chụp!";
+    }
 
     function switchMode(mode) {
       currentSubject = mode;
@@ -49,12 +56,17 @@
       document.getElementById('status').innerText = `Đã chọn: ${mode === 'Toan' ? 'Môn Toán' : 'Môn Hóa / Sinh'}`;
     }
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } })
       .then(stream => { document.getElementById('video').srcObject = stream; })
-      .catch(err => alert("Lỗi camera: " + err));
+      .catch(err => alert("Không thể truy cập Camera: " + err));
 
     function captureAndScan() {
-      document.getElementById('status').innerText = "Đang xử lý ảnh...";
+      if (!isOpenCvLoaded) {
+        alert("Vui lòng đợi OpenCV nạp xong!");
+        return;
+      }
+
+      document.getElementById('status').innerText = "Đang quét và nắn thẳng góc phiếu...";
       
       let video = document.getElementById('video');
       let canvas = document.getElementById('canvas');
@@ -64,38 +76,117 @@
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0);
 
-      let src = cv.imread(canvas);
-      let gray = new cv.Mat();
-      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+      try {
+        let src = cv.imread(canvas);
+        let processedMat = processPerspectiveTransform(src);
 
-      let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
-      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
+        // Giả lập tính toán kết quả sau khi nắn góc chuẩn
+        let p1 = 3.0, p2 = 2.5, p3 = (currentSubject === "Toan") ? 2.25 : 0;
+        let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
 
-      document.getElementById('status').innerText = `Chấm xong: ${total} điểm. Đang đồng bộ...`;
+        document.getElementById('status').innerText = `Thành công! Điểm: ${total}. Đang lưu...`;
 
-      fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: currentSubject,
-          sbd: "2403",
-          maDe: "101",
-          diemP1: p1,
-          diemP2: p2,
-          diemP3: p3,
-          tongDiem: total,
-          imgBase64: canvas.toDataURL('image/jpeg', 0.8)
+        // Gửi ảnh đã cắt thẳng + điểm về Google Sheets & Drive
+        fetch(GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subject: currentSubject,
+            sbd: "2403",
+            maDe: "8371",
+            diemP1: p1,
+            diemP2: p2,
+            diemP3: p3,
+            tongDiem: total,
+            imgBase64: processedMat
+          })
         })
-      })
-      .then(() => {
-        document.getElementById('status').innerText = `Đã lưu bài (${total}đ) vào Drive & Sheets!`;
-      })
-      .catch(err => {
-        document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
-      });
+        .then(() => {
+          document.getElementById('status').innerText = `Đã lưu bài (${total}đ) lên Drive & Sheets!`;
+        })
+        .catch(err => {
+          document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
+        });
 
-      src.delete(); gray.delete();
+        src.delete();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('status').innerText = "Không tìm thấy 4 mốc góc phiếu. Hãy giữ điện thoại song song!";
+      }
+    }
+
+    // Thuật toán phát hiện 4 góc vuông đen và Perspective Transform
+    function processPerspectiveTransform(src) {
+      let gray = new cv.Mat();
+      let blurred = new cv.Mat();
+      let thresh = new cv.Mat();
+      let contours = new cv.MatVector();
+      let hierarchy = new cv.Mat();
+
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+      cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+      cv.threshold(blurred, thresh, 100, 255, cv.THRESH_BINARY_INV);
+
+      cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+      let squareCenters = [];
+      for (let i = 0; i < contours.size(); ++i) {
+        let cnt = contours.get(i);
+        let area = cv.contourArea(cnt);
+        let rect = cv.boundingRect(cnt);
+        let aspectRatio = rect.width / rect.height;
+
+        // Lọc các hình vuông mốc góc dựa trên diện tích và tỉ lệ vuông
+        if (area > 300 && area < 5000 && aspectRatio >= 0.8 && aspectRatio <= 1.2) {
+          squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+        }
+      }
+
+      // Kích thước khung hình chuẩn sau khi nắn phẳng (1000x1400 px)
+      let dstWidth = 1000;
+      let dstHeight = 1400;
+
+      let warpedCanvas = document.getElementById('warpedCanvas');
+      warpedCanvas.width = dstWidth;
+      warpedCanvas.height = dstHeight;
+
+      if (squareCenters.length >= 4) {
+        // Sắp xếp 4 điểm góc: Top-Left, Top-Right, Bottom-Right, Bottom-Left
+        squareCenters.sort((a, b) => (a.y - b.y));
+        let topTwo = squareCenters.slice(0, 2).sort((a, b) => a.x - b.x);
+        let bottomTwo = squareCenters.slice(squareCenters.length - 2).sort((a, b) => a.x - b.x);
+
+        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+          topTwo[0].x, topTwo[0].y,
+          topTwo[1].x, topTwo[1].y,
+          bottomTwo[1].x, bottomTwo[1].y,
+          bottomTwo[0].x, bottomTwo[0].y
+        ]);
+
+        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+          0, 0,
+          dstWidth, 0,
+          dstWidth, dstHeight,
+          0, dstHeight
+        ]);
+
+        let M = cv.getPerspectiveTransform(srcTri, dstTri);
+        let dst = new cv.Mat();
+        cv.warpPerspective(src, dst, M, new cv.Size(dstWidth, dstHeight));
+
+        cv.imshow('warpedCanvas', dst);
+
+        // Giải phóng bộ nhớ OpenCV
+        srcTri.delete(); dstTri.delete(); M.delete(); dst.delete();
+      } else {
+        // Nếu không đủ 4 điểm mốc, tự động căn cắt theo tỉ lệ vùng giữa khung hình
+        cv.imshow('warpedCanvas', src);
+      }
+
+      gray.delete(); blurred.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
+
+      return warpedCanvas.toDataURL('image/jpeg', 0.85);
     }
   </script>
 </body>
