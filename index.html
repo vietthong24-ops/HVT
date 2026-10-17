@@ -41,7 +41,7 @@
     .action-item.highlight h4, .action-item.highlight p { color: #0a1128; }
     .action-icon { font-size: 22px; }
 
-    /* UI ĐÁP ÁN PHẦN I (Tròn chọn màu Vàng) */
+    /* UI ĐÁP ÁN PHẦN I */
     .p1-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .p1-num { font-size: 14px; font-weight: bold; width: 24px; color: #94a3b8; text-align: right; }
     .p1-options { display: flex; gap: 12px; flex: 1; }
@@ -61,6 +61,13 @@
     .p3-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .p3-num { font-size: 13px; font-weight: bold; color: #94a3b8; width: 20px; }
     .p3-input { flex: 1; background: #0a1128; border: 1px solid #2a3b6e; color: #fff; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; }
+
+    /* Rank Badges UI */
+    .rank-badge { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
+    .rank-1 { background: #f5b041; color: #0a1128; box-shadow: 0 0 8px #f5b041; }
+    .rank-2 { background: #94a3b8; color: #0a1128; }
+    .rank-3 { background: #d97706; color: #ffffff; }
+    .rank-other { background: #1e2d5a; color: #94a3b8; }
 
     /* UI THỐNG KÊ BIỂU ĐỒ */
     .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -92,25 +99,16 @@
     #cam-container { position: relative; width: 92%; max-width: 380px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* 4 Ô VUÔNG XANH MỤC TIÊU - TĂNG KÍCH THƯỚC GẤP ĐÔI (76px x 76px) */
     .target-box { 
-      position: absolute; 
-      width: 76px; 
-      height: 76px; 
-      border: 3.5px solid #10b981; 
-      border-radius: 8px; 
-      box-shadow: 0 0 12px #10b981; 
-      background: rgba(16, 185, 129, 0.15); 
-      pointer-events: none; 
-      transition: all 0.1s ease;
+      position: absolute; width: 76px; height: 76px; 
+      border: 3.5px solid #10b981; border-radius: 8px; 
+      box-shadow: 0 0 12px #10b981; background: rgba(16, 185, 129, 0.15); 
+      pointer-events: none; transition: all 0.1s ease;
     }
     .target-box.active { background: #10b981 !important; box-shadow: 0 0 20px #10b981 !important; }
     
-    /* Căn lề rộng rãi cho ô 76px */
-    #target-tl { top: 2%; left: 2%; } 
-    #target-tr { top: 2%; right: 2%; }
-    #target-bl { bottom: 2%; left: 2%; } 
-    #target-br { bottom: 2%; right: 2%; }
+    #target-tl { top: 2%; left: 2%; } #target-tr { top: 2%; right: 2%; }
+    #target-bl { bottom: 2%; left: 2%; } #target-br { bottom: 2%; right: 2%; }
   </style>
 </head>
 <body>
@@ -124,6 +122,36 @@
     <div class="user-name">Hồ Viết Thống</div>
   </header>
 
+  <!-- TAB 0: BẢNG XẾP HẠNG ĐIỂM SỐ HỌC SINH (Toán - Hóa - Sinh) -->
+  <div id="page-xephang" class="page-section">
+    <div class="card">
+      <div class="card-title">
+        <div>
+          <h2 style="font-size: 18px; font-weight: bold; color:#f5b041;">🏆 Bảng Xếp Hạng Lớp 12B2</h2>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Xếp hạng từ cao xuống thấp (Toán - Hóa - Sinh)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 8px;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 35px; text-align: center;">Hạng</th>
+            <th>Họ và tên</th>
+            <th style="text-align: center;">Toán</th>
+            <th style="text-align: center;">Hóa</th>
+            <th style="text-align: center;">Sinh</th>
+            <th style="text-align: right; color:#f5b041;">Tổng 3 môn</th>
+          </tr>
+        </thead>
+        <tbody id="rankingTableBody">
+          <!-- Bảng xếp hạng động được vẽ bằng JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- TAB 1: BÀI THI CHI TIẾT -->
   <div id="page-baithi" class="page-section active">
     <div class="card">
@@ -134,7 +162,6 @@
         </div>
       </div>
 
-      <!-- Bộ chọn Môn & Mẫu Phiếu Giấy -->
       <label>Chọn môn học:</label>
       <div class="subject-pills">
         <div id="pill-Toan" class="pill-btn" onclick="selectSubject('Toán')">Môn Toán</div>
@@ -293,7 +320,7 @@
     </div>
   </div>
 
-  <!-- CAMERA SCANNER OVERLAY (4 Ô VUÔNG XANH LỚN 76PX) -->
+  <!-- CAMERA SCANNER OVERLAY -->
   <div id="cam-modal">
     <div id="cam-header">
       <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan (Ô Vuông 76px)</span>
@@ -302,7 +329,6 @@
 
     <div id="cam-container">
       <video id="video" autoplay playsinline></video>
-      <!-- 4 Ô VUÔNG XANH LỚN GẤP ĐÔI -->
       <div id="target-tl" class="target-box"></div>
       <div id="target-tr" class="target-box"></div>
       <div id="target-bl" class="target-box"></div>
@@ -315,11 +341,11 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
+  <!-- BOTTOM NAVIGATION BAR (ĐÃ THAY NÚT THỨ 1 THÀNH XẾP HẠNG) -->
   <div class="bottom-nav">
-    <div class="nav-item" onclick="switchTab('page-baithi', this)">
-      <div class="nav-icon">✏️</div>
-      <div>KTĐK</div>
+    <div class="nav-item" onclick="switchTab('page-xephang', this)">
+      <div class="nav-icon">🏆</div>
+      <div>Xếp hạng</div>
     </div>
     <div class="nav-item active" onclick="switchTab('page-baithi', this)">
       <div class="nav-icon">📋</div>
@@ -340,10 +366,47 @@
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
     let currentSubject = "Hóa";
-    let p1Count = 18; // Mặc định 18 câu cho Hóa/Sinh
+    let p1Count = 18;
     let videoStream = null;
     let autoScanInterval = null;
     let isProcessing = false;
+
+    // Dữ liệu mẫu điểm học sinh lớp 12B2 các môn Toán - Hóa - Sinh
+    let studentsScoreData = [
+      { sbd: "2203", name: "Phạm Thị Vân Anh", toan: 9.25, hoa: 9.00, sinh: 9.50 },
+      { sbd: "2201", name: "Lê Công Đức Anh", toan: 8.75, hoa: 8.75, sinh: 9.00 },
+      { sbd: "2205", name: "Hồ Nguyễn Thanh Bảo", toan: 8.50, hoa: 8.50, sinh: 8.75 },
+      { sbd: "2202", name: "Phạm Ngọc Quế Anh", toan: 8.00, hoa: 7.75, sinh: 8.25 },
+      { sbd: "2204", name: "Trần Huỳnh Anh", toan: 7.75, hoa: 8.00, sinh: 7.50 }
+    ];
+
+    // Vẽ Bảng Xếp Hạng Sắp Xếp Từ Cao Xuống Thấp
+    function renderRankingList() {
+      // Sắp xếp giảm dần theo Tổng điểm 3 môn
+      studentsScoreData.sort((a, b) => (b.toan + b.hoa + b.sinh) - (a.toan + a.hoa + a.sinh));
+
+      let tbody = document.getElementById('rankingTableBody');
+      tbody.innerHTML = '';
+
+      studentsScoreData.forEach((st, idx) => {
+        let total = (st.toan + st.hoa + st.sinh).toFixed(2);
+        let rankClass = "rank-other";
+        if (idx === 0) rankClass = "rank-1";
+        if (idx === 1) rankClass = "rank-2";
+        if (idx === 2) rankClass = "rank-3";
+
+        tbody.innerHTML += `
+          <tr>
+            <td style="text-align: center;"><div class="rank-badge ${rankClass}">${idx + 1}</div></td>
+            <td style="font-weight: bold;">${st.name}<div style="font-size:10px; color:#94a3b8;">SBD: ${st.sbd}</div></td>
+            <td style="text-align: center; color:#38bdf8;">${st.toan.toFixed(2)}</td>
+            <td style="text-align: center; color:#38bdf8;">${st.hoa.toFixed(2)}</td>
+            <td style="text-align: center; color:#38bdf8;">${st.sinh.toFixed(2)}</td>
+            <td style="text-align: right; font-size: 14px; font-weight: bold; color: #f5b041;">${total}</td>
+          </tr>
+        `;
+      });
+    }
 
     function selectSubject(sub) {
       currentSubject = sub;
@@ -383,7 +446,6 @@
       renderPart1();
     }
 
-    // Render Phần I theo p1Count (12 hoặc 18 câu)
     function renderPart1() {
       let container = document.getElementById('part1Matrix');
       container.innerHTML = '';
@@ -455,6 +517,7 @@
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       if (navEl) navEl.classList.add('active');
+      if (pageId === 'page-xephang') renderRankingList();
     }
 
     function onOpenCvReady() {}
@@ -480,7 +543,6 @@
       }
     }
 
-    // KIỂM TRA ĐỘ ĐEN TRONG 4 Ô VUÔNG XANH TO (76PX)
     function checkZipGradeTargets() {
       if (isProcessing) return;
 
@@ -495,7 +557,6 @@
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let data = imgData.data;
 
-      // 4 Vùng kiểm tra với diện tích rộng bao dung hơn
       let targets = [
         { elId: 'target-tl', x: 25, y: 25 },
         { elId: 'target-tr', x: 275, y: 25 },
@@ -571,10 +632,11 @@
       });
     }
 
-    // Khởi tạo
+    // Khởi tạo giao diện
     changeSheetModel();
     renderPart2();
     renderPart3();
+    renderRankingList();
   </script>
 </body>
 </html>
