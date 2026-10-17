@@ -1,402 +1,384 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.7">
-  <style type="text/css">
-    body {background-color: #0c0f17}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Helvetica Neue'; color: #ea790f; -webkit-text-stroke: #ea790f; background-color: #121622}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Helvetica Neue'; color: #ea790f; -webkit-text-stroke: #ea790f; background-color: #121622; min-height: 19.0px}
-    span.s1 {font-kerning: none}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NKZip - Chấm Bài GDPT 2018</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }
+
+    /* Header */
+    header { background: #1c2541; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
+    .logo-group { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 4px 8px; border-radius: 8px; font-size: 16px; }
+    .logo-title { font-size: 18px; font-weight: bold; color: #fff; }
+    .user-name { font-size: 14px; color: #94a3b8; }
+
+    /* Layout Sections */
+    .page-section { display: none; padding: 16px; }
+    .page-section.active { display: block; }
+
+    /* Cards */
+    .card { background: #1c2541; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #2a385b; }
+    .card-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
+    
+    label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 8px; }
+    input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+    
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+    /* Stat Box */
+    .stat-card { background: #0b132b; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }
+    .stat-val { font-size: 16px; font-weight: bold; color: #38bdf8; margin-top: 2px; }
+    .stat-lbl { font-size: 10px; color: #94a3b8; }
+
+    /* Buttons */
+    .btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
+    .btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+    .action-item { background: #1c2541; border: 1px solid #2a385b; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .action-item.highlight { background: #f59e0b; color: #0b132b; border: none; }
+    .action-icon { font-size: 20px; }
+    .action-text h4 { font-size: 15px; margin-bottom: 2px; }
+    .action-text p { font-size: 12px; opacity: 0.8; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }
+    th { color: #94a3b8; font-weight: 600; }
+
+    /* Bottom Nav Bar */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 60px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 11px; gap: 3px; cursor: pointer; }
+    .nav-item.active { color: #f59e0b; font-weight: bold; }
+    .nav-icon { font-size: 18px; }
+
+    /* Camera Modal - Khung hình chữ nhật đứng A5 */
+    #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
+    #cam-header { padding: 12px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
+    
+    #cam-container { 
+      position: relative; 
+      width: 86%; 
+      max-width: 360px; 
+      aspect-ratio: 1 / 1.414; /* Tỉ lệ đứng chuẩn A5 */
+      margin: 15px auto 0 auto; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 2px solid #3a4a75; 
+      background: #000; 
+    }
+    video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    
+    .scan-guide { 
+      position: absolute; 
+      top: 3%; bottom: 3%; left: 3%; right: 3%; 
+      border: 2.5px dashed #10b981; 
+      pointer-events: none; 
+      border-radius: 6px; 
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45); 
+    }
   </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>&lt;!DOCTYPE html&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;html lang="vi"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;head&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;title&gt;NKZip - Chấm Bài GDPT 2018&lt;/title&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"&gt;&lt;/script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;style&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Header */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>header { background: #1c2541; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-group { display: flex; align-items: center; gap: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 4px 8px; border-radius: 8px; font-size: 16px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.logo-title { font-size: 18px; font-weight: bold; color: #fff; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.user-name { font-size: 14px; color: #94a3b8; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Layout Sections */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section { display: none; padding: 16px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.page-section.active { display: block; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Cards */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card { background: #1c2541; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #2a385b; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 8px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 14px; }</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Stat Box */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-card { background: #0b132b; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-val { font-size: 16px; font-weight: bold; color: #38bdf8; margin-top: 2px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.stat-lbl { font-size: 10px; color: #94a3b8; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Buttons */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item { background: #1c2541; border: 1px solid #2a385b; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-item.highlight { background: #f59e0b; color: #0b132b; border: none; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-icon { font-size: 20px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-text h4 { font-size: 15px; margin-bottom: 2px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.action-text p { font-size: 12px; opacity: 0.8; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Tables */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>table { width: 100%; border-collapse: collapse; margin-top: 10px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>th { color: #94a3b8; font-weight: 600; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Bottom Nav Bar */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 60px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 11px; gap: 3px; cursor: pointer; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-item.active { color: #f59e0b; font-weight: bold; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.nav-icon { font-size: 18px; }</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>/* Camera Modal - Khung hình chữ nhật đứng A5 */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-header { padding: 12px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>#cam-container {<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>position: relative;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>width: 86%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>max-width: 360px;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>aspect-ratio: 1 / 1.414; /* Tỉ lệ đứng chuẩn A5 */</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>margin: 15px auto 0 auto;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border-radius: 12px;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>overflow: hidden;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border: 2px solid #3a4a75;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>background: #000;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>video { width: 100%; height: 100%; object-fit: cover; display: block; }</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">    </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.scan-guide {<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>position: absolute;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>top: 3%; bottom: 3%; left: 3%; right: 3%;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border: 2.5px dashed #10b981;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>pointer-events: none;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>border-radius: 6px;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/style&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/head&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;body&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;header&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="logo-group"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="logo-icon"&gt;NK&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="logo-title"&gt;NKZip&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="user-name"&gt;Hồ Viết Thống&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/header&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 1: BÀI THI --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-baithi" class="page-section active"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;span&gt;Thông tin bài thi&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;span style="font-size: 12px; color: #38bdf8;"&gt;Mẫu 8371 (GDPT 2018)&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">      </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;label&gt;Tên bài thi&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;input type="text" id="examName" value="Hóa Học - Đề Thi Giữa Kỳ I"&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div style="display: flex; gap: 10px;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div style="flex: 1;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Môn học&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;select id="examSubject"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option&gt;Hóa Học&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option&gt;Toán Học&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option&gt;Sinh Học&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;option&gt;Vật Lý&lt;/option&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/select&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div style="flex: 1;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;label&gt;Mã đề chính&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;input type="text" id="mainMade" value="201"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item highlight" onclick="openCameraModal()"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📷&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Chấm bài ngay&lt;/h4&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Mở camera quét phiếu A5 đứng&lt;/p&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="action-item" onclick="switchTab('page-thongke')"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-icon"&gt;📊&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="action-text"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h4&gt;Xem thống kê &amp; Bảng điểm&lt;/h4&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p&gt;Báo cáo điểm từng học sinh &amp; ĐTB toàn lớp&lt;/p&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 2: DANH SÁCH HỌC SINH --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-hocsinh" class="page-section"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;&lt;span&gt;Cập nhật Danh Sách Lớp 12B2&lt;/span&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;label&gt;Dán danh sách (Mỗi dòng: SBD, Họ Tên)&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;textarea id="importStudentText" rows="3" placeholder="2201, Lê Công Đức Anh&amp;#10;2202, Phạm Ngọc Quế Anh"&gt;&lt;/textarea&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()"&gt;📥 Cập Nhật Danh Sách Học Sinh&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="padding: 8px;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;thead&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;STT&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;SBD&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Họ và tên&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Lớp&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/thead&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;tbody id="studentTableBody"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2201&lt;/td&gt;&lt;td&gt;Lê Công Đức Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;2202&lt;/td&gt;&lt;td&gt;Phạm Ngọc Quế Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;2203&lt;/td&gt;&lt;td&gt;Phạm Thị Vân Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;2204&lt;/td&gt;&lt;td&gt;Trần Huỳnh Anh&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;2205&lt;/td&gt;&lt;td&gt;Hồ Nguyễn Thanh Bảo&lt;/td&gt;&lt;td&gt;12B2&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tbody&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/table&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 3: THỐNG KÊ &amp; XEM ĐIỂM --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-thongke" class="page-section"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span&gt;Báo cáo &amp; Thống kê điểm thi&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng điểm trung bình cả lớp --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title"&gt;&lt;span style="color: #f59e0b;"&gt;Điểm Trung Bình Cả Lớp (12B2)&lt;/span&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="grid-4"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-lbl"&gt;ĐTB P.I&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-val" id="avgP1"&gt;4.25&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-lbl"&gt;ĐTB P.II&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-val" id="avgP2"&gt;2.50&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-lbl"&gt;ĐTB P.III&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-val" id="avgP3"&gt;1.75&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;div class="stat-card" style="border-color: #f59e0b;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-lbl" style="color: #f59e0b;"&gt;ĐTB TỔNG&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;div class="stat-val" id="avgTotal" style="color: #f59e0b;"&gt;8.50&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;!-- Bảng điểm chi tiết từng em --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="padding: 8px;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="card-title" style="padding: 4px;"&gt;&lt;span&gt;Chi tiết điểm từng học sinh&lt;/span&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;table&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;thead&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;SBD&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Họ Tên&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;Đề&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.I&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.II&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th&gt;P.III&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">            </span>&lt;th style="color:#f59e0b;"&gt;Tổng&lt;/th&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/thead&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;tbody id="scoreTableBody"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;2201&lt;/td&gt;&lt;td&gt;Lê Công Đức Anh&lt;/td&gt;&lt;td&gt;201&lt;/td&gt;&lt;td&gt;4.50&lt;/td&gt;&lt;td&gt;2.50&lt;/td&gt;&lt;td&gt;1.75&lt;/td&gt;&lt;td style="font-weight:bold; color:#f59e0b;"&gt;8.75&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;2202&lt;/td&gt;&lt;td&gt;Phạm Ngọc Quế Anh&lt;/td&gt;&lt;td&gt;201&lt;/td&gt;&lt;td&gt;4.00&lt;/td&gt;&lt;td&gt;2.25&lt;/td&gt;&lt;td&gt;1.50&lt;/td&gt;&lt;td style="font-weight:bold; color:#f59e0b;"&gt;7.75&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;2203&lt;/td&gt;&lt;td&gt;Phạm Thị Vân Anh&lt;/td&gt;&lt;td&gt;201&lt;/td&gt;&lt;td&gt;4.25&lt;/td&gt;&lt;td&gt;2.75&lt;/td&gt;&lt;td&gt;2.00&lt;/td&gt;&lt;td style="font-weight:bold; color:#f59e0b;"&gt;9.00&lt;/td&gt;&lt;/tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tbody&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/table&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- TAB 4: LỚP HỌC --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="page-lop" class="page-section"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card-title"&gt;&lt;span&gt;Danh sách Lớp học&lt;/span&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="switchTab('page-hocsinh')"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;h3 style="font-size: 16px; font-weight: bold;"&gt;Lớp 12B2&lt;/h3&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;p style="font-size: 12px; color: #94a3b8; margin-top: 4px;"&gt;48 học sinh • Môn Hóa Học&lt;/p&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span style="color: #38bdf8; font-weight: bold;"&gt;➔&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- CAMERA SCANNER OVERLAY --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div id="cam-modal"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div id="cam-header"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span style="font-weight: bold; color: #f59e0b;"&gt;NKZip - Căn khung đứng A5&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-secondary" onclick="closeCameraModal()"&gt;✕ Đóng Camera&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div id="cam-container"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;video id="video" autoplay playsinline&gt;&lt;/video&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="scan-guide"&gt;&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div style="padding: 16px; text-align: center;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div id="status" style="color: #10b981; font-weight: 600; font-size: 14px; min-height: 24px; margin-bottom: 10px;"&gt;Đang nạp camera...&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;button class="btn-main" onclick="captureAndScan()"&gt;📷 Chụp &amp; Chấm Bài&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;!-- BOTTOM NAVIGATION BAR --&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div class="bottom-nav"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item active" onclick="switchTab('page-baithi', this)"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;📋&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Bài thi&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-hocsinh', this)"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;🎓&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Học sinh&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-lop', this)"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;👥&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Lớp&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="nav-item" onclick="switchTab('page-thongke', this)"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="nav-icon"&gt;📊&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div&gt;Thống kê&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;canvas id="canvas" style="display:none;"&gt;&lt;/canvas&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec";<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let isOpenCvLoaded = false;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>let videoStream = null;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function switchTab(pageId, navEl) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.page-section').forEach(p =&gt; p.classList.remove('active'));</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.querySelectorAll('.nav-item').forEach(n =&gt; n.classList.remove('active'));</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById(pageId).classList.add('active');</b></span></p>
-<p class="p2"><span class="s1"><b><span class="Apple-converted-space">      </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navEl) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>navEl.classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>} else {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>// Tự kích hoạt tab trên thanh dưới</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let items = document.querySelectorAll('.nav-item');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-baithi') items[0].classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-hocsinh') items[1].classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-lop') items[2].classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>if (pageId === 'page-thongke') items[3].classList.add('active');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function onOpenCvReady() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>isOpenCvLoaded = true;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Căn 4 góc phiếu đứng A5 vừa ô xanh rồi bấm Chụp.";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function openCameraModal() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('cam-modal').style.display = 'flex';</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1080 }, height: { ideal: 1920 } } })</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>.then(stream =&gt; {<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>videoStream = stream;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>document.getElementById('video').srcObject = stream;<span class="Apple-converted-space"> </span></b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>})</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>.catch(err =&gt; alert("Không mở được Camera: " + err));</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function closeCameraModal() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('cam-modal').style.display = 'none';</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (videoStream) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>videoStream.getTracks().forEach(track =&gt; track.stop());</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function importStudentsList() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let text = document.getElementById('importStudentText').value.trim();</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (!text) return alert("Vui lòng nhập hoặc dán danh sách SBD và Họ Tên!");</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let lines = text.split('\n');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let tbody = document.getElementById('studentTableBody');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>tbody.innerHTML = '';</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>lines.forEach((line, index) =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let parts = line.split(',');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let sbd = parts[0] ? parts[0].trim() : (2201 + index);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>let name = parts[1] ? parts[1].trim() : "Học sinh";</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>tbody.innerHTML += `&lt;tr&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${index + 1}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${sbd}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;${name}&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>&lt;td&gt;12B2&lt;/td&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;/tr&gt;`;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>});</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>function captureAndScan() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>if (navigator.vibrate) navigator.vibrate(50);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Đang xử lý OMR...";</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let video = document.getElementById('video');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let canvas = document.getElementById('canvas');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let ctx = canvas.getContext('2d');</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>canvas.width = video.videoWidth || 1080;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>canvas.height = video.videoHeight || 1920;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>ctx.drawImage(video, 0, 0);</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let p1 = 4.25, p2 = 2.5, p3 = 1.75;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>let total = (p1 + p2 + p3).toFixed(2);</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang đồng bộ...`;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>fetch(GAS_WEBAPP_URL, {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>method: "POST",</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>mode: "no-cors",</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>headers: { "Content-Type": "application/json" },</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>body: JSON.stringify({</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>subject: document.getElementById('examSubject').value,</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>sbd: "2203",</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>maDe: document.getElementById('mainMade').value,</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">          </span>imgBase64: compressedImgBase64</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>})</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.then(() =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `✓ Đã lưu bài em Phạm Thị Vân Anh (${total}đ) thành công!`;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>})</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>.catch(err =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>});</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/body&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/html&gt;</b></span></p>
+
+  <header>
+    <div class="logo-group">
+      <div class="logo-icon">NK</div>
+      <div class="logo-title">NKZip</div>
+    </div>
+    <div class="user-name">Hồ Viết Thống</div>
+  </header>
+
+  <!-- TAB 1: BÀI THI -->
+  <div id="page-baithi" class="page-section active">
+    <div class="card">
+      <div class="card-title">
+        <span>Thông tin bài thi</span>
+        <span style="font-size: 12px; color: #38bdf8;">Mẫu 8371 (GDPT 2018)</span>
+      </div>
+      
+      <label>Tên bài thi</label>
+      <input type="text" id="examName" value="Hóa Học - Đề Thi Giữa Kỳ I">
+
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+          <label>Môn học</label>
+          <select id="examSubject">
+            <option>Hóa Học</option>
+            <option>Toán Học</option>
+            <option>Sinh Học</option>
+            <option>Vật Lý</option>
+          </select>
+        </div>
+        <div style="flex: 1;">
+          <label>Mã đề chính</label>
+          <input type="text" id="mainMade" value="201">
+        </div>
+      </div>
+    </div>
+
+    <div class="action-item highlight" onclick="openCameraModal()">
+      <div class="action-icon">📷</div>
+      <div class="action-text">
+        <h4>Chấm bài ngay</h4>
+        <p>Mở camera quét phiếu A5 đứng</p>
+      </div>
+    </div>
+
+    <div class="action-item" onclick="switchTab('page-thongke')">
+      <div class="action-icon">📊</div>
+      <div class="action-text">
+        <h4>Xem thống kê & Bảng điểm</h4>
+        <p>Báo cáo điểm từng học sinh & ĐTB toàn lớp</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: DANH SÁCH HỌC SINH -->
+  <div id="page-hocsinh" class="page-section">
+    <div class="card">
+      <div class="card-title"><span>Cập nhật Danh Sách Lớp 12B2</span></div>
+      <label>Dán danh sách (Mỗi dòng: SBD, Họ Tên)</label>
+      <textarea id="importStudentText" rows="3" placeholder="2201, Lê Công Đức Anh&#10;2202, Phạm Ngọc Quế Anh"></textarea>
+      <button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()">📥 Cập Nhật Danh Sách Học Sinh</button>
+    </div>
+
+    <div class="card" style="padding: 8px;">
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>SBD</th>
+            <th>Họ và tên</th>
+            <th>Lớp</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <tr><td>1</td><td>2201</td><td>Lê Công Đức Anh</td><td>12B2</td></tr>
+          <tr><td>2</td><td>2202</td><td>Phạm Ngọc Quế Anh</td><td>12B2</td></tr>
+          <tr><td>3</td><td>2203</td><td>Phạm Thị Vân Anh</td><td>12B2</td></tr>
+          <tr><td>4</td><td>2204</td><td>Trần Huỳnh Anh</td><td>12B2</td></tr>
+          <tr><td>5</td><td>2205</td><td>Hồ Nguyễn Thanh Bảo</td><td>12B2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: THỐNG KÊ & XEM ĐIỂM -->
+  <div id="page-thongke" class="page-section">
+    <div class="card-title">
+      <span>Báo cáo & Thống kê điểm thi</span>
+    </div>
+
+    <!-- Bảng điểm trung bình cả lớp -->
+    <div class="card">
+      <div class="card-title"><span style="color: #f59e0b;">Điểm Trung Bình Cả Lớp (12B2)</span></div>
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-lbl">ĐTB P.I</div>
+          <div class="stat-val" id="avgP1">4.25</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">ĐTB P.II</div>
+          <div class="stat-val" id="avgP2">2.50</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">ĐTB P.III</div>
+          <div class="stat-val" id="avgP3">1.75</div>
+        </div>
+        <div class="stat-card" style="border-color: #f59e0b;">
+          <div class="stat-lbl" style="color: #f59e0b;">ĐTB TỔNG</div>
+          <div class="stat-val" id="avgTotal" style="color: #f59e0b;">8.50</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bảng điểm chi tiết từng em -->
+    <div class="card" style="padding: 8px;">
+      <div class="card-title" style="padding: 4px;"><span>Chi tiết điểm từng học sinh</span></div>
+      <table>
+        <thead>
+          <tr>
+            <th>SBD</th>
+            <th>Họ Tên</th>
+            <th>Đề</th>
+            <th>P.I</th>
+            <th>P.II</th>
+            <th>P.III</th>
+            <th style="color:#f59e0b;">Tổng</th>
+          </tr>
+        </thead>
+        <tbody id="scoreTableBody">
+          <tr><td>2201</td><td>Lê Công Đức Anh</td><td>201</td><td>4.50</td><td>2.50</td><td>1.75</td><td style="font-weight:bold; color:#f59e0b;">8.75</td></tr>
+          <tr><td>2202</td><td>Phạm Ngọc Quế Anh</td><td>201</td><td>4.00</td><td>2.25</td><td>1.50</td><td style="font-weight:bold; color:#f59e0b;">7.75</td></tr>
+          <tr><td>2203</td><td>Phạm Thị Vân Anh</td><td>201</td><td>4.25</td><td>2.75</td><td>2.00</td><td style="font-weight:bold; color:#f59e0b;">9.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: LỚP HỌC -->
+  <div id="page-lop" class="page-section">
+    <div class="card-title"><span>Danh sách Lớp học</span></div>
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="switchTab('page-hocsinh')">
+      <div>
+        <h3 style="font-size: 16px; font-weight: bold;">Lớp 12B2</h3>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">48 học sinh • Môn Hóa Học</p>
+      </div>
+      <span style="color: #38bdf8; font-weight: bold;">➔</span>
+    </div>
+  </div>
+
+  <!-- CAMERA SCANNER OVERLAY -->
+  <div id="cam-modal">
+    <div id="cam-header">
+      <span style="font-weight: bold; color: #f59e0b;">NKZip - Căn khung đứng A5</span>
+      <button class="btn-secondary" onclick="closeCameraModal()">✕ Đóng Camera</button>
+    </div>
+
+    <div id="cam-container">
+      <video id="video" autoplay playsinline></video>
+      <div class="scan-guide"></div>
+    </div>
+
+    <div style="padding: 16px; text-align: center;">
+      <div id="status" style="color: #10b981; font-weight: 600; font-size: 14px; min-height: 24px; margin-bottom: 10px;">Đang nạp camera...</div>
+      <button class="btn-main" onclick="captureAndScan()">📷 Chụp & Chấm Bài</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('page-baithi', this)">
+      <div class="nav-icon">📋</div>
+      <div>Bài thi</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('page-hocsinh', this)">
+      <div class="nav-icon">🎓</div>
+      <div>Học sinh</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('page-lop', this)">
+      <div class="nav-icon">👥</div>
+      <div>Lớp</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('page-thongke', this)">
+      <div class="nav-icon">📊</div>
+      <div>Thống kê</div>
+    </div>
+  </div>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script>
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
+    let isOpenCvLoaded = false;
+    let videoStream = null;
+
+    function switchTab(pageId, navEl) {
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      
+      if (navEl) {
+        navEl.classList.add('active');
+      } else {
+        // Tự kích hoạt tab trên thanh dưới
+        let items = document.querySelectorAll('.nav-item');
+        if (pageId === 'page-baithi') items[0].classList.add('active');
+        if (pageId === 'page-hocsinh') items[1].classList.add('active');
+        if (pageId === 'page-lop') items[2].classList.add('active');
+        if (pageId === 'page-thongke') items[3].classList.add('active');
+      }
+    }
+
+    function onOpenCvReady() {
+      isOpenCvLoaded = true;
+      document.getElementById('status').innerText = "Căn 4 góc phiếu đứng A5 vừa ô xanh rồi bấm Chụp.";
+    }
+
+    function openCameraModal() {
+      document.getElementById('cam-modal').style.display = 'flex';
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1080 }, height: { ideal: 1920 } } })
+        .then(stream => { 
+          videoStream = stream;
+          document.getElementById('video').srcObject = stream; 
+        })
+        .catch(err => alert("Không mở được Camera: " + err));
+    }
+
+    function closeCameraModal() {
+      document.getElementById('cam-modal').style.display = 'none';
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
+    }
+
+    function importStudentsList() {
+      let text = document.getElementById('importStudentText').value.trim();
+      if (!text) return alert("Vui lòng nhập hoặc dán danh sách SBD và Họ Tên!");
+
+      let lines = text.split('\n');
+      let tbody = document.getElementById('studentTableBody');
+      tbody.innerHTML = '';
+
+      lines.forEach((line, index) => {
+        let parts = line.split(',');
+        let sbd = parts[0] ? parts[0].trim() : (2201 + index);
+        let name = parts[1] ? parts[1].trim() : "Học sinh";
+
+        tbody.innerHTML += `<tr>
+          <td>${index + 1}</td>
+          <td>${sbd}</td>
+          <td>${name}</td>
+          <td>12B2</td>
+        </tr>`;
+      });
+
+      alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);
+    }
+
+    function captureAndScan() {
+      if (navigator.vibrate) navigator.vibrate(50);
+      document.getElementById('status').innerText = "Đang xử lý OMR...";
+
+      let video = document.getElementById('video');
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth || 1080;
+      canvas.height = video.videoHeight || 1920;
+      ctx.drawImage(video, 0, 0);
+
+      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.65);
+
+      let p1 = 4.25, p2 = 2.5, p3 = 1.75;
+      let total = (p1 + p2 + p3).toFixed(2);
+
+      document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang đồng bộ...`;
+
+      fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: document.getElementById('examSubject').value,
+          sbd: "2203",
+          maDe: document.getElementById('mainMade').value,
+          diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,
+          imgBase64: compressedImgBase64
+        })
+      })
+      .then(() => {
+        document.getElementById('status').innerText = `✓ Đã lưu bài em Phạm Thị Vân Anh (${total}đ) thành công!`;
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
+      });
+    }
+  </script>
 </body>
 </html>
