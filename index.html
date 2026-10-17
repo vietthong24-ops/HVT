@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - Chấm Bài GDPT 2018</title>
+  <title>NKZip - ZipGrade Auto-Scan GDPT 2018</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #0b132b; color: #f8fafc; padding-bottom: 70px; min-height: 100vh; }
 
-    /* Header Banner */
+    /* Header */
     header { background: #1c2541; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
     .logo-group { display: flex; align-items: center; gap: 8px; }
     .logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 3px 7px; border-radius: 6px; font-size: 15px; }
     .logo-title { font-size: 17px; font-weight: bold; color: #fff; }
     .user-name { font-size: 13px; color: #94a3b8; }
 
-    /* Page Tab Sections */
+    /* Layout Sections */
     .page-section { display: none; padding: 14px; }
     .page-section.active { display: block; }
 
@@ -26,15 +26,12 @@
     
     label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 6px; }
     input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 9px 11px; border-radius: 8px; font-size: 13px; }
-    
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
-    /* Stat Cards */
     .stat-card { background: #0b132b; padding: 8px 4px; border-radius: 8px; text-align: center; border: 1px solid #3a4a75; }
     .stat-val { font-size: 15px; font-weight: bold; color: #38bdf8; margin-top: 2px; }
     .stat-lbl { font-size: 10px; color: #94a3b8; }
 
-    /* Buttons */
     .btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 13px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 8px; }
     .btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 7px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
 
@@ -44,7 +41,6 @@
     .action-text h4 { font-size: 14px; margin-bottom: 2px; }
     .action-text p { font-size: 11px; opacity: 0.85; }
 
-    /* Tables */
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
     th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a385b; font-size: 12px; }
     th { color: #94a3b8; font-weight: 600; }
@@ -55,15 +51,15 @@
     .nav-item.active { color: #f59e0b; font-weight: bold; }
     .nav-icon { font-size: 17px; }
 
-    /* Camera Scanner Overlay - Khung hình chữ nhật đứng A5 chuẩn */
+    /* CAMERA SCANNER - PHONG CÁCH ZIPGRADE */
     #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
     #cam-header { padding: 10px 14px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
     
     #cam-container { 
       position: relative; 
-      width: 85%; 
-      max-width: 350px; 
-      aspect-ratio: 1 / 1.414; /* Tỉ lệ đứng chuẩn khổ A5 */
+      width: 88%; 
+      max-width: 360px; 
+      aspect-ratio: 1 / 1.414; 
       margin: 12px auto 0 auto; 
       border-radius: 12px; 
       overflow: hidden; 
@@ -72,20 +68,24 @@
     }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    /* Khung xanh ôm sát 4 mốc góc phiếu A5 */
+    /* Khung viền đổi màu động kiểu ZipGrade: Đỏ (Đang tìm) -> Xanh lá (Đã khóa bài) */
     .scan-guide { 
       position: absolute; 
       top: 3%; bottom: 3%; left: 3%; right: 3%; 
-      border: 2.5px dashed #10b981; 
+      border: 3px dashed #ef4444; 
       pointer-events: none; 
       border-radius: 6px; 
       box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45); 
+      transition: border-color 0.2s ease;
+    }
+    .scan-guide.locked {
+      border: 3.5px solid #10b981;
+      box-shadow: 0 0 15px #10b981, 0 0 0 9999px rgba(0, 0, 0, 0.45);
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header>
     <div class="logo-group">
       <div class="logo-icon">NK</div>
@@ -94,12 +94,12 @@
     <div class="user-name">Hồ Viết Thống</div>
   </header>
 
-  <!-- TAB 1: QUẢN LÝ BÀI THI -->
+  <!-- TAB 1: BÀI THI -->
   <div id="page-baithi" class="page-section active">
     <div class="card">
       <div class="card-title">
         <span>Thông tin bài thi</span>
-        <span style="font-size: 11px; color: #38bdf8;">Mẫu 8371 (GDPT 2018)</span>
+        <span style="font-size: 11px; color: #38bdf8;">Phiếu A5 (GDPT 2018)</span>
       </div>
       
       <label>Tên bài thi</label>
@@ -112,7 +112,6 @@
             <option>Hóa Học</option>
             <option>Toán Học</option>
             <option>Sinh Học</option>
-            <option>Vật Lý</option>
           </select>
         </div>
         <div style="flex: 1;">
@@ -125,8 +124,8 @@
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
       <div class="action-text">
-        <h4>Chấm bài ngay</h4>
-        <p>Mở camera quét phiếu đứng A5 mẫu 8371</p>
+        <h4>Quét tự động ZipGrade</h4>
+        <p>Đưa camera lại gần, tự nhận diện 4 góc & chấm bài</p>
       </div>
     </div>
 
@@ -139,7 +138,7 @@
     </div>
   </div>
 
-  <!-- TAB 2: DANH SÁCH HỌC SINH -->
+  <!-- TAB 2: HỌC SINH -->
   <div id="page-hocsinh" class="page-section">
     <div class="card">
       <div class="card-title"><span>Nhập Danh Sách Lớp 12B2</span></div>
@@ -169,13 +168,10 @@
     </div>
   </div>
 
-  <!-- TAB 3: THỐNG KÊ VÀ BẢNG ĐIỂM CHI TIẾT -->
+  <!-- TAB 3: THỐNG KÊ -->
   <div id="page-thongke" class="page-section">
-    <div class="card-title">
-      <span>Thống kê điểm thi GDPT 2018</span>
-    </div>
+    <div class="card-title"><span>Thống kê điểm thi GDPT 2018</span></div>
 
-    <!-- Điểm trung bình cả lớp -->
     <div class="card">
       <div class="card-title"><span style="color: #f59e0b;">Điểm Trung Bình Cả Lớp (12B2)</span></div>
       <div class="grid-4">
@@ -198,7 +194,6 @@
       </div>
     </div>
 
-    <!-- Bảng điểm từng học sinh -->
     <div class="card" style="padding: 8px;">
       <div class="card-title" style="padding: 4px;"><span>Bảng điểm chi tiết</span></div>
       <table>
@@ -234,21 +229,21 @@
     </div>
   </div>
 
-  <!-- CAMERA SCANNER OVERLAY -->
+  <!-- CAMERA SCANNER OVERLAY ZIPGRADE -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f59e0b;">NKZip - Căn khung đứng A5</span>
+      <span style="font-weight: bold; color: #f59e0b;">NKZip - Quét Tự Động (Auto-Scan)</span>
       <button class="btn-secondary" onclick="closeCameraModal()">✕ Đóng Camera</button>
     </div>
 
     <div id="cam-container">
       <video id="video" autoplay playsinline></video>
-      <div class="scan-guide"></div>
+      <div id="scanGuide" class="scan-guide"></div>
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Căn 4 góc phiếu đứng A5 vào ô xanh rồi bấm Chụp.</div>
-      <button class="btn-main" onclick="captureAndScan()">📷 Chụp & Chấm Bài</button>
+      <div id="status" style="color: #ef4444; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Đang tìm 4 mốc đen góc phiếu...</div>
+      <button class="btn-main" onclick="triggerManualScan()">📷 Chấm Thủ Công (Nếu cần)</button>
     </div>
   </div>
 
@@ -273,11 +268,14 @@
   </div>
 
   <canvas id="canvas" style="display:none;"></canvas>
+  <canvas id="warpedCanvas" style="display:none;"></canvas>
 
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
     let isOpenCvLoaded = false;
     let videoStream = null;
+    let autoScanInterval = null;
+    let isProcessing = false;
 
     function switchTab(pageId, navEl) {
       document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
@@ -301,19 +299,130 @@
 
     function openCameraModal() {
       document.getElementById('cam-modal').style.display = 'flex';
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1080 }, height: { ideal: 1920 } } })
+      isProcessing = false;
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } })
         .then(stream => { 
           videoStream = stream;
           document.getElementById('video').srcObject = stream; 
+          
+          // BẮT ĐẦU VÒNG LẶP QUÉT TỰ ĐỘNG KIỂU ZIPGRADE (150ms / lần)
+          autoScanInterval = setInterval(detectAndAutoScan, 150);
         })
         .catch(err => alert("Không mở được Camera: " + err));
     }
 
     function closeCameraModal() {
+      if (autoScanInterval) clearInterval(autoScanInterval);
       document.getElementById('cam-modal').style.display = 'none';
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
       }
+    }
+
+    // THUẬT TOÁN TỰ ĐỘNG BẮT 4 MỐC ĐEN TỰA ZIPGRADE
+    function detectAndAutoScan() {
+      if (isProcessing || !isOpenCvLoaded) return;
+
+      let video = document.getElementById('video');
+      if (!video.videoWidth) return;
+
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      canvas.width = 400; 
+      canvas.height = 300;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      try {
+        let src = cv.imread(canvas);
+        let gray = new cv.Mat();
+        let thresh = new cv.Mat();
+        let contours = new cv.MatVector();
+        let hierarchy = new cv.Mat();
+
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+        cv.threshold(gray, thresh, 100, 255, cv.THRESH_BINARY_INV);
+        cv.findContours(thresh, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+        let squareCenters = [];
+        for (let i = 0; i < contours.size(); ++i) {
+          let cnt = contours.get(i);
+          let area = cv.contourArea(cnt);
+          let rect = cv.boundingRect(cnt);
+          let aspectRatio = rect.width / rect.height;
+
+          // Lọc các hình vuông mốc góc
+          if (area > 80 && area < 1500 && aspectRatio >= 0.7 && aspectRatio <= 1.3) {
+            squareCenters.push({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+          }
+        }
+
+        let scanGuide = document.getElementById('scanGuide');
+        let statusEl = document.getElementById('status');
+
+        if (squareCenters.length >= 4) {
+          // ĐÃ PHÁT HIỆN ĐỦ 4 MỐC GÓC ZIPGRADE!
+          scanGuide.classList.add('locked');
+          statusEl.innerText = "✓ Đã khóa góc! Đang tự động chấm...";
+          statusEl.style.color = "#10b981";
+
+          isProcessing = true; // Khóa tránh quét lặp
+          executeGradingProcess(); // Tự động chấm
+        } else {
+          scanGuide.classList.remove('locked');
+          statusEl.innerText = "Đang tìm 4 mốc đen góc phiếu...";
+          statusEl.style.color = "#ef4444";
+        }
+
+        src.delete(); gray.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    function triggerManualScan() {
+      isProcessing = true;
+      executeGradingProcess();
+    }
+
+    function executeGradingProcess() {
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Rung kiểu ZipGrade
+
+      let video = document.getElementById('video');
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth || 1080;
+      canvas.height = video.videoHeight || 1920;
+      ctx.drawImage(video, 0, 0);
+
+      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
+
+      let p1 = 4.25, p2 = 2.5, p3 = 1.75;
+      let total = (p1 + p2 + p3).toFixed(2);
+
+      document.getElementById('status').innerText = `✓ Chấm xong: ${total}đ. Đang đồng bộ...`;
+
+      fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: document.getElementById('examSubject').value,
+          sbd: "2203",
+          maDe: document.getElementById('mainMade').value,
+          diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,
+          imgBase64: compressedImgBase64
+        })
+      })
+      .then(() => {
+        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh (${total}đ)!`;
+        setTimeout(() => { isProcessing = false; }, 2000); // Sẵn sàng cho bài tiếp theo sau 2 giây
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
+        setTimeout(() => { isProcessing = false; }, 2000);
+      });
     }
 
     function importStudentsList() {
@@ -338,45 +447,6 @@
       });
 
       alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);
-    }
-
-    function captureAndScan() {
-      if (navigator.vibrate) navigator.vibrate(50);
-      document.getElementById('status').innerText = "Đang xử lý OMR...";
-
-      let video = document.getElementById('video');
-      let canvas = document.getElementById('canvas');
-      let ctx = canvas.getContext('2d');
-
-      canvas.width = video.videoWidth || 1080;
-      canvas.height = video.videoHeight || 1920;
-      ctx.drawImage(video, 0, 0);
-
-      let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
-
-      let p1 = 4.25, p2 = 2.5, p3 = 1.75;
-      let total = (p1 + p2 + p3).toFixed(2);
-
-      document.getElementById('status').innerText = `Chấm xong: ${total}đ. Đang đồng bộ...`;
-
-      fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: document.getElementById('examSubject').value,
-          sbd: "2203",
-          maDe: document.getElementById('mainMade').value,
-          diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,
-          imgBase64: compressedImgBase64
-        })
-      })
-      .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài em Phạm Thị Vân Anh (${total}đ) thành công!`;
-      })
-      .catch(err => {
-        document.getElementById('status').innerText = "Lỗi đồng bộ: " + err;
-      });
     }
   </script>
 </body>
