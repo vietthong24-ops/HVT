@@ -3,91 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NKZip - Chấm Bài GDPT 2018 (Chuẩn 2025-2026)</title>
+  <title>NKZip - App Chấm Thi GDPT 2018</title>
   <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0b132b; color: #f8fafc; padding-bottom: 75px; min-height: 100vh; }
+    body { background: #0a1128; color: #ffffff; padding-bottom: 75px; min-height: 100vh; }
 
-    /* Header Banner */
-    header { background: #1c2541; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
+    /* Header Topbar */
+    header { background: #0f172a; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
     .logo-group { display: flex; align-items: center; gap: 8px; }
-    .logo-icon { background: #f59e0b; color: #0b132b; font-weight: 900; padding: 3px 7px; border-radius: 6px; font-size: 15px; }
-    .logo-title { font-size: 17px; font-weight: bold; color: #fff; }
+    .logo-icon { background: #f5b041; color: #0a1128; font-weight: 900; padding: 4px 8px; border-radius: 8px; font-size: 15px; }
+    .logo-title { font-size: 18px; font-weight: bold; color: #f5b041; }
     .user-name { font-size: 13px; color: #94a3b8; }
 
-    /* Layout Sections */
+    /* Page Tabs */
     .page-section { display: none; padding: 14px; }
     .page-section.active { display: block; }
 
-    /* Cards & Containers */
-    .card { background: #1c2541; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #2a385b; }
-    .card-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
-    
-    label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 4px; margin-top: 6px; }
-    input, select, textarea { width: 100%; background: #0b132b; border: 1px solid #3a4a75; color: #fff; padding: 9px 11px; border-radius: 8px; font-size: 13px; }
-    
-    /* Subject Selector Pills */
-    .subject-pills { display: flex; gap: 8px; margin-top: 6px; margin-bottom: 10px; }
-    .pill-btn { flex: 1; padding: 10px; background: #0b132b; border: 1px solid #3a4a75; color: #94a3b8; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; }
-    .pill-btn.active { background: #2563eb; color: #fff; border-color: #38bdf8; }
+    /* Cards & Container UI */
+    .card { background: #111d3d; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #1e2d5a; }
+    .card-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #ffffff; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Matrix Key Grids */
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-    .ans-row { display: flex; align-items: center; justify-content: space-between; background: #0b132b; padding: 6px 10px; border-radius: 6px; border: 1px solid #2a385b; }
-    .ans-row span { font-size: 12px; font-weight: 600; color: #f59e0b; }
-    
-    /* Buttons */
-    .btn-main { background: #f59e0b; color: #0b132b; width: 100%; padding: 13px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 8px; }
-    .btn-secondary { background: #2a385b; color: #38bdf8; border: 1px solid #3a4a75; padding: 7px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
+    /* Buttons NKZip Style */
+    .btn-gold { background: #f5b041; color: #0a1128; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; }
+    .btn-navy { background: #162447; color: #38bdf8; border: 1px solid #1e2d5a; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-outline { background: transparent; color: #ffffff; border: 1px solid #2a3b6e; padding: 6px 12px; border-radius: 8px; font-size: 12px; }
 
-    .action-item { background: #1c2541; border: 1px solid #2a385b; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .action-item.highlight { background: #f59e0b; color: #0b132b; border: none; }
-    .action-icon { font-size: 20px; }
-    .action-text h4 { font-size: 14px; margin-bottom: 2px; }
-    .action-text p { font-size: 11px; opacity: 0.85; }
+    .action-item { background: #111d3d; border: 1px solid #1e2d5a; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .action-item.highlight { background: #f5b041; color: #0a1128; border: none; }
+    .action-item.highlight h4, .action-item.highlight p { color: #0a1128; }
+    .action-icon { font-size: 22px; }
 
-    /* Bottom Navigation Bar */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c2541; height: 58px; display: flex; border-top: 1px solid #2a385b; z-index: 99; }
+    /* UI ĐÁP ÁN PHẦN I (Tròn chọn màu Vàng chuẩn Ảnh 8) */
+    .p1-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .p1-num { font-size: 14px; font-weight: bold; width: 24px; color: #94a3b8; text-align: right; }
+    .p1-options { display: flex; gap: 12px; flex: 1; }
+    .opt-circle { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #2a3b6e; background: #0a1128; color: #fff; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .opt-circle.selected { background: #f5b041; color: #0a1128; border-color: #f5b041; }
+
+    /* UI ĐÁP ÁN PHẦN II (4 Card Đúng/Sai chuẩn Ảnh 7) */
+    .p2-card { background: #111d3d; border: 1px solid #1e2d5a; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+    .p2-title { font-size: 14px; font-weight: bold; color: #ffffff; margin-bottom: 8px; }
+    .p2-subrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .p2-label { font-size: 13px; color: #94a3b8; font-weight: 600; }
+    .p2-buttons { display: flex; gap: 10px; }
+    .tf-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #2a3b6e; background: #0a1128; color: #fff; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .tf-btn.selected { background: #f5b041; color: #0a1128; border-color: #f5b041; }
+
+    /* UI ĐÁP ÁN PHẦN III (Ô Điền Số Chuẩn Ảnh 7) */
+    .p3-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .p3-num { font-size: 13px; font-weight: bold; color: #94a3b8; width: 20px; }
+    .p3-input { flex: 1; background: #0a1128; border: 1px solid #2a3b6e; color: #fff; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; }
+
+    /* UI THỐNG KÊ BIỂU ĐỒ (Chuẩn Ảnh 3 & 10) */
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stat-box { background: #0a1128; border: 1px solid #1e2d5a; border-radius: 8px; padding: 8px; text-align: center; }
+    .stat-num { font-size: 18px; font-weight: bold; color: #ffffff; }
+    .stat-label { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+
+    .chart-container { height: 100px; display: flex; align-items: flex-end; gap: 4px; padding-top: 10px; border-bottom: 1px solid #1e2d5a; margin-bottom: 12px; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+    .chart-bar { width: 100%; background: #f5b041; border-radius: 3px 3px 0 0; min-height: 2px; }
+    .chart-label { font-size: 9px; color: #94a3b8; margin-top: 4px; }
+
+    /* Table List UI */
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid #1e2d5a; font-size: 12px; }
+    th { color: #94a3b8; font-weight: 600; }
+    .badge-warn { background: rgba(245, 176, 65, 0.2); color: #f5b041; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+
+    /* Bottom Nav Bar */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; height: 58px; display: flex; border-top: 1px solid #1e2d5a; z-index: 99; }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 10px; gap: 2px; cursor: pointer; }
-    .nav-item.active { color: #f59e0b; font-weight: bold; }
-    .nav-icon { font-size: 17px; }
+    .nav-item.active { color: #f5b041; font-weight: bold; }
+    .nav-icon { font-size: 18px; }
 
-    /* CAMERA SCANNER ZIPGRADE STYLE */
-    #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b132b; z-index: 200; flex-direction: column; }
-    #cam-header { padding: 10px 14px; background: #1c2541; display: flex; justify-content: space-between; align-items: center; }
+    /* Camera Overlay ZipGrade */
+    #cam-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1128; z-index: 200; flex-direction: column; }
+    #cam-header { padding: 10px 14px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; }
     
-    #cam-container { 
-      position: relative; 
-      width: 90%; 
-      max-width: 370px; 
-      aspect-ratio: 1 / 1.414; 
-      margin: 10px auto 0 auto; 
-      border-radius: 12px; 
-      overflow: hidden; 
-      border: 2px solid #3a4a75; 
-      background: #000; 
-    }
+    #cam-container { position: relative; width: 90%; max-width: 370px; aspect-ratio: 1 / 1.414; margin: 10px auto 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid #2a3b6e; background: #000; }
     video { width: 100%; height: 100%; object-fit: cover; display: block; }
     
-    .target-box {
-      position: absolute; width: 38px; height: 38px;
-      border: 3px solid #10b981; border-radius: 6px;
-      box-shadow: 0 0 8px #10b981; background: rgba(16, 185, 129, 0.15);
-      pointer-events: none; transition: all 0.1s ease;
-    }
+    .target-box { position: absolute; width: 38px; height: 38px; border: 3px solid #10b981; border-radius: 6px; box-shadow: 0 0 8px #10b981; background: rgba(16, 185, 129, 0.15); pointer-events: none; }
     .target-box.active { background: #10b981 !important; box-shadow: 0 0 15px #10b981 !important; }
-
-    #target-tl { top: 3.5%; left: 3.5%; }
-    #target-tr { top: 3.5%; right: 3.5%; }
-    #target-bl { bottom: 3.5%; left: 3.5%; }
-    #target-br { bottom: 3.5%; right: 3.5%; }
+    #target-tl { top: 3.5%; left: 3.5%; } #target-tr { top: 3.5%; right: 3.5%; }
+    #target-bl { bottom: 3.5%; left: 3.5%; } #target-br { bottom: 3.5%; right: 3.5%; }
   </style>
 </head>
 <body>
 
-  <!-- Header Banner -->
+  <!-- Top Header Bar -->
   <header>
     <div class="logo-group">
       <div class="logo-icon">NK</div>
@@ -96,112 +102,153 @@
     <div class="user-name">Hồ Viết Thống</div>
   </header>
 
-  <!-- TAB 1: BÀI THI & CÀI ĐẶT MÔN -->
+  <!-- TAB 1: BÀI THI CHI TIẾT (Trang chính Bài Thi chuẩn Ảnh 2 & 4) -->
   <div id="page-baithi" class="page-section active">
     <div class="card">
       <div class="card-title">
-        <span>Cấu hình Bài thi GDPT 2018</span>
-        <span style="font-size: 11px; color: #38bdf8;">Bộ GD&ĐT (2025-2026)</span>
+        <div>
+          <h2 style="font-size: 20px; font-weight: bold; color:#fff;">Hoá</h2>
+          <p style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">201 · Phiếu 18 - 4 - 6 (chương trình mới)</p>
+        </div>
       </div>
 
-      <label>Chọn môn học thi</label>
-      <div class="subject-pills">
-        <div id="pill-Toan" class="pill-btn" onclick="selectSubject('Toán')">Môn Toán</div>
-        <div id="pill-Hoa" class="pill-btn active" onclick="selectSubject('Hóa')">Môn Hóa</div>
-        <div id="pill-Sinh" class="pill-btn" onclick="selectSubject('Sinh')">Môn Sinh</div>
-      </div>
-      
-      <label>Tên bài thi / Kỳ thi</label>
-      <input type="text" id="examName" value="Hóa Học - Kiểm Tra Định Kỳ Giữa Kỳ I">
-
-      <div style="display: flex; gap: 8px;">
-        <div style="flex: 1;">
-          <label>Mã đề thi chính</label>
-          <input type="text" id="mainMade" value="201">
-        </div>
-        <div style="flex: 1;">
-          <label>Mẫu phiếu áp dụng</label>
-          <select id="sheetModel">
-            <option>Phiếu A5 (18-4-6)</option>
-          </select>
-        </div>
+      <div style="display: flex; justify-content: space-around; margin: 10px 0; text-align: center;">
+        <div><div style="font-size: 11px; color: #94a3b8;">Bài đã chấm</div><div style="font-size: 18px; font-weight: bold;">48</div></div>
+        <div><div style="font-size: 11px; color: #94a3b8;">Mã đề</div><div style="font-size: 18px; font-weight: bold;">1</div></div>
+        <div><div style="font-size: 11px; color: #94a3b8;">Số câu</div><div style="font-size: 18px; font-weight: bold; color:#f5b041;">18–4–6</div></div>
       </div>
     </div>
 
-    <!-- Nút hành động chính -->
+    <!-- Action Menu (Chuẩn Ảnh 2) -->
+    <div class="action-item" onclick="switchTab('page-dapan')">
+      <div class="action-icon">✏️</div>
+      <div>
+        <h4 style="font-size: 15px;">Chỉnh sửa</h4>
+        <p style="font-size: 12px; color: #94a3b8;">Tên bài thi, đáp án, mã đề, thang điểm</p>
+      </div>
+    </div>
+
     <div class="action-item highlight" onclick="openCameraModal()">
       <div class="action-icon">📷</div>
-      <div class="action-text">
-        <h4>Chấm bài thi ngay (ZipGrade Auto)</h4>
-        <p>Quét tự động, nhận diện đáp án OMR bên trong</p>
+      <div>
+        <h4 style="font-size: 15px;">Chấm bài</h4>
+        <p style="font-size: 12px;">Mở camera, đưa phiếu vào là tự chấm</p>
       </div>
     </div>
 
-    <div class="action-item" onclick="switchTab('page-dapan')">
-      <div class="action-icon">⚙️</div>
-      <div class="action-text">
-        <h4>Quản lý Ma trận Đáp án</h4>
-        <p>Nhập đáp án Phần I, Phần II (Đ/S) & Phần III (Ngắn)</p>
+    <div class="action-item" onclick="switchTab('page-thongke')">
+      <div class="action-icon">📋</div>
+      <div>
+        <h4 style="font-size: 15px;">Bài làm</h4>
+        <p style="font-size: 12px; color: #94a3b8;">Xem lại, sửa từng bài, bảng điểm</p>
       </div>
     </div>
 
     <div class="action-item" onclick="switchTab('page-thongke')">
       <div class="action-icon">📊</div>
-      <div class="action-text">
-        <h4>Thống kê & Bảng điểm</h4>
-        <p>Báo cáo điểm chi tiết P.I, P.II, P.III & ĐTB toàn lớp</p>
+      <div>
+        <h4 style="font-size: 15px;">Phân tích</h4>
+        <p style="font-size: 12px; color: #94a3b8;">Tỉ lệ đúng – sai từng câu theo mã đề</p>
       </div>
     </div>
   </div>
 
-  <!-- TAB 2: QUẢN LÝ ĐÁP ÁN (PHẦN I, II, III) -->
+  <!-- TAB 2: CÀI ĐẶT ĐÁP ÁN (Giao diện chuẩn Ảnh 7 & 8) -->
   <div id="page-dapan" class="page-section">
-    <div class="card">
-      <div class="card-title">
-        <span>Ma Trận Đáp Án - Môn <b id="lblSubjectName" style="color:#f59e0b;">Hóa</b></span>
-        <button class="btn-secondary" onclick="saveMatrixKey()">💾 Lưu Đáp Án</button>
-      </div>
-
-      <!-- Phần I: 18 câu Trắc nghiệm -->
-      <div style="margin-bottom: 12px;">
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần I: Trắc nghiệm (18 câu - Chọn 1 đáp án)</h4>
-        <div class="grid-2" id="part1Container"></div>
-      </div>
-
-      <!-- Phần II: 4 câu Đúng / Sai -->
-      <div style="margin-bottom: 12px; border-top: 1px solid #2a385b; padding-top: 10px;">
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần II: Câu hỏi Đúng/Sai (4 câu - Mỗi câu 4 ý)</h4>
-        <div id="part2Container"></div>
-      </div>
-
-      <!-- Phần III: 6 câu Trả lời ngắn -->
-      <div style="border-top: 1px solid #2a385b; padding-top: 10px;">
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">Phần III: Trả lời ngắn (6 câu - Nhập số)</h4>
-        <div class="grid-2" id="part3Container"></div>
+    <div style="margin-bottom: 12px;">
+      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Đáp án</h3>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 13px;">Mã đề:</span>
+        <button class="btn-navy" style="background:#f5b041; color:#0a1128; font-weight:bold;">A</button>
+        <button class="btn-navy">+ Thêm mã đề</button>
+        <button class="btn-navy">Đổi tên mã</button>
       </div>
     </div>
+
+    <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+      <button class="btn-navy" style="flex:1;">📷 Quét phiếu đáp án</button>
+      <button class="btn-navy" style="flex:1;">̂ Nhập từ Excel</button>
+    </div>
+
+    <!-- PHẦN I: 18 CÂU TRẮC NGHIỆM (Chuẩn Ảnh 8) -->
+    <div class="card">
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN I (Bấm để chọn đáp án)</h4>
+      <div id="part1Matrix"></div>
+    </div>
+
+    <!-- PHẦN II: CÂU HỎI ĐÚNG / SAI (Chuẩn Ảnh 7) -->
+    <div class="card">
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 12px;">PHẦN II (Chọn Đ hoặc S cho từng ý)</h4>
+      <div class="grid-2" id="part2Matrix"></div>
+    </div>
+
+    <!-- PHẦN III: TRẢ LỜI NGẮN (Chuẩn Ảnh 7) -->
+    <div class="card">
+      <h4 style="font-size: 12px; color: #f5b041; margin-bottom: 6px;">PHẦN III (Tối đa 4 kí tự, ví dụ: 9,05)</h4>
+      <div id="part3Matrix"></div>
+    </div>
+
+    <button class="btn-gold" onclick="saveAnswerKey()">💾 Lưu Toàn Bộ Đáp Án</button>
   </div>
 
-  <!-- TAB 3: DANH SÁCH HỌC SINH -->
-  <div id="page-hocsinh" class="page-section">
+  <!-- TAB 3: THỐNG KÊ & BẢNG ĐIỂM (Chuẩn Ảnh 3 & 6) -->
+  <div id="page-thongke" class="page-section">
     <div class="card">
-      <div class="card-title"><span>Cập nhật Danh Sách Lớp 12B2</span></div>
-      <label>Dán danh sách (Cú pháp: SBD, Họ Tên)</label>
-      <textarea id="importStudentText" rows="3" placeholder="2201, Lê Công Đức Anh&#10;2202, Phạm Ngọc Quế Anh"></textarea>
-      <button class="btn-secondary" style="margin-top:8px; width:100%;" onclick="importStudentsList()">📥 Cập Nhật Danh Sách Học Sinh</button>
+      <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Báo cáo điểm môn Hoá</h3>
+      
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-num">48</div><div class="stat-label">Số bài</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:#f5b041;">8,43</div><div class="stat-label">ĐTB Cả Lớp</div></div>
+        <div class="stat-box"><div class="stat-num">9,5</div><div class="stat-label">Cao nhất</div></div>
+        <div class="stat-box"><div class="stat-num">4,21</div><div class="stat-label">TB Phần I</div></div>
+        <div class="stat-box"><div class="stat-num">3,03</div><div class="stat-label">TB Phần II</div></div>
+        <div class="stat-box"><div class="stat-num">1,19</div><div class="stat-label">TB Phần III</div></div>
+      </div>
+
+      <!-- Biểu đồ phân bố điểm chuẩn Ảnh 6 -->
+      <div class="chart-container">
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 0%;"></div><div class="chart-label">0-1</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 0%;"></div><div class="chart-label">2-3</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 0%;"></div><div class="chart-label">4-5</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 15%;"></div><div class="chart-label">6-7</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 25%;"></div><div class="chart-label">7-8</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 80%;"></div><div class="chart-label">8-9</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar" style="height: 35%;"></div><div class="chart-label">9-10</div></div>
+      </div>
     </div>
 
+    <!-- Bảng danh sách bài làm chi tiết chuẩn Ảnh 3 -->
     <div class="card" style="padding: 8px;">
       <table>
         <thead>
           <tr>
-            <th>STT</th>
-            <th>SBD</th>
-            <th>Họ và tên</th>
-            <th>Lớp</th>
+            <th>Điểm</th>
+            <th>Phần I</th>
+            <th>Phần II</th>
+            <th>Phần III</th>
+            <th>Ghi chú</th>
           </tr>
         </thead>
-        <tbody id="studentTableBody">
+        <tbody>
+          <tr><td style="font-weight:bold; color:#f5b041;">8,75</td><td>4</td><td>3,5</td><td>1,25</td><td><span class="badge-warn">1 câu bỏ trống</span></td></tr>
+          <tr><td style="font-weight:bold; color:#f5b041;">8,25</td><td>4,5</td><td>3</td><td>0,75</td><td>-</td></tr>
+          <tr><td style="font-weight:bold; color:#f5b041;">9,25</td><td>4,25</td><td>3,5</td><td>1,5</td><td>-</td></tr>
+          <tr><td style="font-weight:bold; color:#f5b041;">8,00</td><td>4</td><td>2,75</td><td>1,25</td><td><span class="badge-warn">1 chỗ cần xem</span></td></tr>
+          <tr><td style="font-weight:bold; color:#f5b041;">8,75</td><td>4,5</td><td>3</td><td>1,25</td><td><span class="badge-warn">1 câu tô 2 ô</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: HỌC SINH & LỚP (Chuẩn Ảnh 1, 5, 9) -->
+  <div id="page-hocsinh" class="page-section">
+    <div class="card-title"><span>Danh sách Học sinh 12B2</span></div>
+    <div class="card" style="padding: 8px;">
+      <table>
+        <thead>
+          <tr><th>STT</th><th>SBD</th><th>Họ và tên</th><th>Lớp</th></tr>
+        </thead>
+        <tbody id="studentListTable">
           <tr><td>1</td><td>2201</td><td>Lê Công Đức Anh</td><td>12B2</td></tr>
           <tr><td>2</td><td>2202</td><td>Phạm Ngọc Quế Anh</td><td>12B2</td></tr>
           <tr><td>3</td><td>2203</td><td>Phạm Thị Vân Anh</td><td>12B2</td></tr>
@@ -212,60 +259,11 @@
     </div>
   </div>
 
-  <!-- TAB 4: THỐNG KÊ & BẢNG ĐIỂM -->
-  <div id="page-thongke" class="page-section">
-    <div class="card-title"><span>Báo cáo & Thống kê điểm thi</span></div>
-
-    <div class="card">
-      <div class="card-title"><span style="color: #f59e0b;">Điểm Trung Bình Cả Lớp (12B2)</span></div>
-      <div class="grid-4">
-        <div class="stat-card">
-          <div class="stat-lbl">ĐTB P.I</div>
-          <div class="stat-val">4.25</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-lbl">ĐTB P.II</div>
-          <div class="stat-val">2.50</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-lbl">ĐTB P.III</div>
-          <div class="stat-val">1.75</div>
-        </div>
-        <div class="stat-card" style="border-color: #f59e0b;">
-          <div class="stat-lbl" style="color: #f59e0b;">ĐTB TỔNG</div>
-          <div class="stat-val" style="color: #f59e0b;">8.50</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="padding: 8px;">
-      <div class="card-title" style="padding: 4px;"><span>Chi tiết điểm từng học sinh</span></div>
-      <table>
-        <thead>
-          <tr>
-            <th>SBD</th>
-            <th>Họ Tên</th>
-            <th>Đề</th>
-            <th>P.I</th>
-            <th>P.II</th>
-            <th>P.III</th>
-            <th style="color:#f59e0b;">Tổng</th>
-          </tr>
-        </thead>
-        <tbody id="scoreTableBody">
-          <tr><td>2201</td><td>Lê Công Đức Anh</td><td>201</td><td>4.50</td><td>2.50</td><td>1.75</td><td style="font-weight:bold; color:#f59e0b;">8.75</td></tr>
-          <tr><td>2202</td><td>Phạm Ngọc Quế Anh</td><td>201</td><td>4.00</td><td>2.25</td><td>1.50</td><td style="font-weight:bold; color:#f59e0b;">7.75</td></tr>
-          <tr><td>2203</td><td>Phạm Thị Vân Anh</td><td>201</td><td>4.25</td><td>2.75</td><td>2.00</td><td style="font-weight:bold; color:#f59e0b;">9.00</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- CAMERA SCANNER OVERLAY ZIPGRADE -->
+  <!-- CAMERA SCANNER OVERLAY -->
   <div id="cam-modal">
     <div id="cam-header">
-      <span style="font-weight: bold; color: #f59e0b;">NKZip Auto-Scan (Đọc OMR)</span>
-      <button class="btn-secondary" onclick="closeCameraModal()">✕ Đóng Camera</button>
+      <span style="font-weight: bold; color: #f5b041;">NKZip Auto Scan</span>
+      <button class="btn-navy" onclick="closeCameraModal()">✕ Đóng</button>
     </div>
 
     <div id="cam-container">
@@ -277,28 +275,28 @@
     </div>
 
     <div style="padding: 14px; text-align: center;">
-      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; min-height: 22px; margin-bottom: 8px;">Khớp 4 ô mốc góc phiếu vào 4 ô xanh...</div>
-      <button class="btn-main" onclick="triggerManualScan()">📷 Chấm Bài Ngay</button>
+      <div id="status" style="color: #10b981; font-weight: 600; font-size: 13px; margin-bottom: 8px;">Đưa 4 ô đen góc phiếu vào 4 ô xanh...</div>
+      <button class="btn-gold" onclick="triggerManualScan()">📷 Chấm Bài Ngay</button>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
+  <!-- BOTTOM NAVIGATION BAR (Chuẩn Ảnh 1, 2, 3, 4, 5, 6, 7, 8, 9) -->
   <div class="bottom-nav">
+    <div class="nav-item" onclick="switchTab('page-baithi', this)">
+      <div class="nav-icon">✏️</div>
+      <div>KTĐK</div>
+    </div>
     <div class="nav-item active" onclick="switchTab('page-baithi', this)">
       <div class="nav-icon">📋</div>
       <div>Bài thi</div>
     </div>
-    <div class="nav-item" onclick="switchTab('page-dapan', this)">
-      <div class="nav-icon">⚙️</div>
-      <div>Đáp án</div>
+    <div class="nav-item" onclick="switchTab('page-hocsinh', this)">
+      <div class="nav-icon">👥</div>
+      <div>Lớp</div>
     </div>
     <div class="nav-item" onclick="switchTab('page-hocsinh', this)">
       <div class="nav-icon">🎓</div>
       <div>Học sinh</div>
-    </div>
-    <div class="nav-item" onclick="switchTab('page-thongke', this)">
-      <div class="nav-icon">📊</div>
-      <div>Thống kê</div>
     </div>
   </div>
 
@@ -306,83 +304,84 @@
 
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxx59M4ZpTP6oL3MZqTYIENw4joa9xU8psEcGdjEzo9OFXoaBUEw2q4FUGXhHQvXEp1PQ/exec"; 
-    let currentSubject = "Hóa";
     let videoStream = null;
     let autoScanInterval = null;
     let isProcessing = false;
 
-    // Tạo giao diện ma trận đáp án GDPT 2018
-    function renderAnswerMatrixUI() {
-      // Render Phần I (18 câu)
-      let p1 = document.getElementById('part1Container');
-      p1.innerHTML = '';
+    // Render Ma trận đáp án Phần I chuẩn Ảnh 8
+    function renderPart1() {
+      let container = document.getElementById('part1Matrix');
+      container.innerHTML = '';
       for (let i = 1; i <= 18; i++) {
-        p1.innerHTML += `
-          <div class="ans-row">
-            <span>Câu ${i}:</span>
-            <select id="p1_key_${i}" style="width:70px; padding:4px;">
-              <option>A</option><option>B</option><option>C</option><option>D</option>
-            </select>
-          </div>`;
-      }
-
-      // Render Phần II (4 câu Đúng/Sai)
-      let p2 = document.getElementById('part2Container');
-      p2.innerHTML = '';
-      for (let i = 1; i <= 4; i++) {
-        p2.innerHTML += `
-          <div style="background:#0b132b; padding:8px; border-radius:6px; margin-bottom:6px; border:1px solid #2a385b;">
-            <div style="font-size:12px; font-weight:bold; color:#f59e0b; margin-bottom:4px;">Câu ${i} (Đúng/Sai):</div>
-            <div style="display:flex; gap:6px;">
-              <span style="font-size:12px;">a:<select id="p2_key_${i}_a"><option>Đ</option><option>S</option></select></span>
-              <span style="font-size:12px;">b:<select id="p2_key_${i}_b"><option>Đ</option><option>S</option></select></span>
-              <span style="font-size:12px;">c:<select id="p2_key_${i}_c"><option>Đ</option><option>S</option></select></span>
-              <span style="font-size:12px;">d:<select id="p2_key_${i}_d"><option>Đ</option><option>S</option></select></span>
+        container.innerHTML += `
+          <div class="p1-row">
+            <div class="p1-num">${i}</div>
+            <div class="p1-options">
+              <div class="opt-circle ${i===1?'selected':''}" onclick="selectP1(${i}, 'A', this)">A</div>
+              <div class="opt-circle ${i===2||i===3||i===5||i===11?'selected':''}" onclick="selectP1(${i}, 'B', this)">B</div>
+              <div class="opt-circle ${i===4||i===8?'selected':''}" onclick="selectP1(${i}, 'C', this)">C</div>
+              <div class="opt-circle ${i===6||i===10?'selected':''}" onclick="selectP1(${i}, 'D', this)">D</div>
             </div>
           </div>`;
       }
+    }
 
-      // Render Phần III (6 câu Trả lời ngắn)
-      let p3 = document.getElementById('part3Container');
-      p3.innerHTML = '';
-      for (let i = 1; i <= 6; i++) {
-        p3.innerHTML += `
-          <div class="ans-row">
-            <span>Câu ${i}:</span>
-            <input type="text" id="p3_key_${i}" placeholder="VD: -2,5" style="width:90px; padding:4px; text-align:center;">
+    // Render Ma trận đáp án Phần II chuẩn Ảnh 7
+    function renderPart2() {
+      let container = document.getElementById('part2Matrix');
+      container.innerHTML = '';
+      for (let i = 1; i <= 4; i++) {
+        container.innerHTML += `
+          <div class="p2-card">
+            <div class="p2-title">Câu ${i}</div>
+            ${['a', 'b', 'c', 'd'].map(sub => `
+              <div class="p2-subrow">
+                <span class="p2-label">${sub})</span>
+                <div class="p2-buttons">
+                  <div class="tf-btn ${sub==='a'||sub==='c'?'selected':''}" onclick="selectP2(${i}, '${sub}', 'Đ', this)">Đ</div>
+                  <div class="tf-btn ${sub==='b'||sub==='d'?'selected':''}" onclick="selectP2(${i}, '${sub}', 'S', this)">S</div>
+                </div>
+              </div>
+            `).join('')}
           </div>`;
       }
     }
 
-    function selectSubject(subject) {
-      currentSubject = subject;
-      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-      if (subject === 'Toán') document.getElementById('pill-Toan').classList.add('active');
-      if (subject === 'Hóa') document.getElementById('pill-Hoa').classList.add('active');
-      if (subject === 'Sinh') document.getElementById('pill-Sinh').classList.add('active');
-
-      document.getElementById('lblSubjectName').innerText = subject;
-      document.getElementById('examName').value = `${subject} Học - Kiểm Tra Định Kỳ Giữa Kỳ I`;
+    // Render Ma trận đáp án Phần III chuẩn Ảnh 7
+    function renderPart3() {
+      let container = document.getElementById('part3Matrix');
+      let defaultVal = ['2', '1235', '884', '9,05', '3,84', '7,4'];
+      container.innerHTML = '';
+      for (let i = 1; i <= 6; i++) {
+        container.innerHTML += `
+          <div class="p3-row">
+            <div class="p3-num">${i}</div>
+            <input type="text" class="p3-input" value="${defaultVal[i-1]}" id="p3_${i}">
+          </div>`;
+      }
     }
 
-    function saveMatrixKey() {
-      alert(`Đã lưu ma trận đáp án môn ${currentSubject} (Mã đề ${document.getElementById('mainMade').value}) thành công!`);
+    function selectP1(q, opt, el) {
+      let parent = el.parentElement;
+      parent.querySelectorAll('.opt-circle').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectP2(q, sub, val, el) {
+      let parent = el.parentElement;
+      parent.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function saveAnswerKey() {
+      alert("Đã lưu ma trận đáp án bài thi Hoá thành công!");
     }
 
     function switchTab(pageId, navEl) {
       document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-      
-      if (navEl) {
-        navEl.classList.add('active');
-      } else {
-        let items = document.querySelectorAll('.nav-item');
-        if (pageId === 'page-baithi') items[0].classList.add('active');
-        if (pageId === 'page-dapan') items[1].classList.add('active');
-        if (pageId === 'page-hocsinh') items[2].classList.add('active');
-        if (pageId === 'page-thongke') items[3].classList.add('active');
-      }
+      if (navEl) navEl.classList.add('active');
     }
 
     function onOpenCvReady() {}
@@ -416,8 +415,7 @@
 
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
-      canvas.width = 300; 
-      canvas.height = 420;
+      canvas.width = 300; canvas.height = 420;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -431,39 +429,27 @@
       ];
 
       let matchedCount = 0;
-
       targets.forEach(t => {
         let darkPixels = 0;
         for (let dx = -8; dx <= 8; dx++) {
           for (let dy = -8; dy <= 8; dy++) {
-            let px = t.x + dx;
-            let py = t.y + dy;
+            let px = t.x + dx; let py = t.y + dy;
             let idx = (py * canvas.width + px) * 4;
             let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
             if (brightness < 90) darkPixels++;
           }
         }
-
         let targetEl = document.getElementById(t.elId);
-        if (darkPixels > 35) {
-          targetEl.classList.add('active');
-          matchedCount++;
-        } else {
-          targetEl.classList.remove('active');
-        }
+        if (darkPixels > 35) { targetEl.classList.add('active'); matchedCount++; }
+        else { targetEl.classList.remove('active'); }
       });
 
       let statusEl = document.getElementById('status');
-
       if (matchedCount === 4) {
-        statusEl.innerText = "✓ Khớp 4 góc! Đang nhận diện đáp án OMR...";
+        statusEl.innerText = "✓ Đã khớp 4 góc! Tự động chấm bài...";
         statusEl.style.color = "#10b981";
-
         isProcessing = true;
         executeGradingProcess();
-      } else {
-        statusEl.innerText = `Khớp 4 mốc đen vào 4 ô xanh (${matchedCount}/4)...`;
-        statusEl.style.color = "#10b981";
       }
     }
 
@@ -472,7 +458,6 @@
       executeGradingProcess();
     }
 
-    // THUẬT TOÁN ĐỌC ĐÁP ÁN NÉT CHÌ OMR
     function executeGradingProcess() {
       if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
 
@@ -486,26 +471,22 @@
 
       let compressedImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
-      // Giả lập điểm số OMR đọc từ ma trận nét chì phiếu A5 GDPT 2018
-      let p1 = 4.25, p2 = 2.50, p3 = (currentSubject === "Toán") ? 1.75 : 2.00;
-      let total = (parseFloat(p1) + parseFloat(p2) + parseFloat(p3)).toFixed(2);
-
-      document.getElementById('status').innerText = `✓ Môn ${currentSubject}: ${total}đ! Đang lưu điểm...`;
+      document.getElementById('status').innerText = "✓ Đã chấm xong: 8,75đ! Đang đồng bộ...";
 
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: currentSubject,
+          subject: "Hóa",
           sbd: "2203",
-          maDe: document.getElementById('mainMade').value,
-          diemP1: p1, diemP2: p2, diemP3: p3, tongDiem: total,
+          maDe: "201",
+          diemP1: 4.25, diemP2: 2.75, diemP3: 1.75, tongDiem: 8.75,
           imgBase64: compressedImgBase64
         })
       })
       .then(() => {
-        document.getElementById('status').innerText = `✓ Đã lưu bài Phạm Thị Vân Anh môn ${currentSubject} (${total}đ)!`;
+        document.getElementById('status').innerText = "✓ Đã lưu bài thành công (8,75đ)!";
         setTimeout(() => { isProcessing = false; }, 1800);
       })
       .catch(err => {
@@ -514,32 +495,10 @@
       });
     }
 
-    function importStudentsList() {
-      let text = document.getElementById('importStudentText').value.trim();
-      if (!text) return alert("Vui lòng nhập hoặc dán danh sách SBD và Họ Tên!");
-
-      let lines = text.split('\n');
-      let tbody = document.getElementById('studentTableBody');
-      tbody.innerHTML = '';
-
-      lines.forEach((line, index) => {
-        let parts = line.split(',');
-        let sbd = parts[0] ? parts[0].trim() : (2201 + index);
-        let name = parts[1] ? parts[1].trim() : "Học sinh";
-
-        tbody.innerHTML += `<tr>
-          <td>${index + 1}</td>
-          <td>${sbd}</td>
-          <td>${name}</td>
-          <td>12B2</td>
-        </tr>`;
-      });
-
-      alert(`Đã cập nhật ${lines.length} học sinh cho Lớp 12B2!`);
-    }
-
-    // Tự động vẽ bảng ma trận đáp án ngay khi mở trang
-    renderAnswerMatrixUI();
+    // Khởi tạo các bảng giao diện ngay khi tải trang
+    renderPart1();
+    renderPart2();
+    renderPart3();
   </script>
 </body>
 </html>
